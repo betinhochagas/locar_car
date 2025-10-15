@@ -136,55 +136,55 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <>
-            {/* Overlay */}
-            <div 
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
-              onClick={() => setIsOpen(false)}
-            />
-            
-            {/* Menu Content */}
-            <div className="md:hidden bg-background border-b border-border shadow-lg animate-fade-in">
-              <div className="px-4 py-4 space-y-2">
-                {menuItems.map((item) => (
-                  <button
-                    key={item.label}
-                    onClick={() => scrollToSection(item.href)}
-                    className={`w-full text-left px-4 py-3 rounded-md transition-all duration-200 ${
-                      activeSection === item.id
-                        ? "text-primary bg-primary/10 font-medium"
-                        : "text-foreground hover:bg-secondary hover:text-primary"
-                    }`}
-                    aria-label={`Ir para ${item.label}`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-                
-                <div className="pt-4 space-y-2">
-                  <Button 
-                    onClick={handleWhatsApp} 
-                    variant="outline" 
-                    className="w-full flex items-center justify-center space-x-2"
-                  >
-                    <Phone className="h-4 w-4" />
-                    <span>(47) 98448-5492</span>
-                  </Button>
-                  
-                  <Button 
-                    onClick={() => scrollToSection("#contato")} 
-                    className="w-full"
-                  >
-                    Fale Conosco
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Mobile Menu Content */}
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 z-50 md:hidden bg-background/95 backdrop-blur-md border-b border-border shadow-xl animate-fade-in max-h-screen overflow-y-auto">
+          <div className="px-4 py-4 space-y-2">
+            {menuItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => scrollToSection(item.href)}
+                className={`w-full text-left px-4 py-3 rounded-md transition-all duration-200 ${
+                  activeSection === item.id
+                    ? "text-primary bg-primary/10 font-medium"
+                    : "text-foreground hover:bg-secondary hover:text-primary"
+                }`}
+                aria-label={`Ir para ${item.label}`}
+              >
+                {item.label}
+              </button>
+            ))}
+            
+            <div className="pt-4 space-y-2">
+              <Button 
+                onClick={handleWhatsApp} 
+                variant="outline" 
+                className="w-full flex items-center justify-center space-x-2"
+              >
+                <Phone className="h-4 w-4" />
+                <span>(47) 98448-5492</span>
+              </Button>
+              
+              <Button 
+                onClick={() => scrollToSection("#contato")} 
+                className="w-full"
+              >
+                Fale Conosco
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
