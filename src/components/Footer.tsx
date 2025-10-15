@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail } from "lucide-react";
+import logoImg from "@/assets/logo.jpg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -8,11 +9,13 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-dark font-bold text-lg">RV</span>
-              </div>
-              <span className="font-bold text-lg">Locações e Investimentos</span>
+            <div className="flex items-center space-x-3 mb-4">
+              <img
+                src={logoImg}
+                alt="RV Car Logo"
+                className="h-10 w-auto"
+              />
+              <span className="font-bold text-lg">RV Car Locações</span>
             </div>
             <p className="text-dark-foreground/70 leading-relaxed">
               Soluções completas em locação de veículos e gestão de investimentos em frota em Blumenau - SC.
