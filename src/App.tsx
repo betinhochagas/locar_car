@@ -8,8 +8,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// GitHub Pages basename
-const basename = window.location.hostname === 'betinhochagas.github.io' ? '/rvcar' : '';
+// No basename needed for Vercel/Netlify
+const basename = '';
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
