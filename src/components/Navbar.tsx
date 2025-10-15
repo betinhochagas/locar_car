@@ -32,7 +32,7 @@ const Navbar = () => {
               alt="RV Car Logo"
               className="h-10 w-auto"
             />
-            <span className="font-bold text-lg hidden sm:inline">RV Car Locações</span>
+            <span className="font-bold text-lg hidden sm:inline">Locações e Investimentos</span>
           </div>
 
           {/* Desktop Menu */}
