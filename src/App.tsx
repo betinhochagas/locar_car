@@ -9,7 +9,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 // GitHub Pages basename
-const basename = import.meta.env.MODE === 'production' ? '/rvcar' : '';
+const basename = window.location.hostname === 'betinhochagas.github.io' ? '/rvcar' : '';
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
