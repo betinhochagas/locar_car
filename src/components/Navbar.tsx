@@ -29,7 +29,7 @@ const Navbar = () => {
             <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
               <span className="text-dark font-bold text-lg">RV</span>
             </div>
-            <span className="font-bold text-lg hidden sm:inline">RV Car Locações</span>
+            <span className="font-bold text-lg hidden sm:inline">Locações e Investimentos</span>
           </div>
 
           {/* Desktop Menu */}

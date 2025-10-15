@@ -23,7 +23,7 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl animate-fade-in">
           <div className="inline-block mb-4 px-4 py-2 bg-primary/20 backdrop-blur-sm rounded-full border border-primary/30">
-            <span className="text-primary font-semibold">Blumenau - SC</span>
+            <span className="text-primary font-semibold">Locação e Investimento</span>
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
@@ -42,7 +42,7 @@ const Hero = () => {
               onClick={handleWhatsApp}
               className="text-base sm:text-lg group"
             >
-              Falar no WhatsApp
+              Fale com um consultor
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button

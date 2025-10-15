@@ -12,7 +12,7 @@ const Footer = () => {
               <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
                 <span className="text-dark font-bold text-lg">RV</span>
               </div>
-              <span className="font-bold text-lg">RV Car Locações</span>
+              <span className="font-bold text-lg">Locações e Investimentos</span>
             </div>
             <p className="text-dark-foreground/70 leading-relaxed">
               Soluções completas em locação de veículos e gestão de investimentos em frota em Blumenau - SC.
