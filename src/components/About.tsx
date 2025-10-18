@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Phone, Clock } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
 
 const About = () => {
   return (
@@ -63,10 +63,10 @@ const About = () => {
             <Card className="border-border text-center animate-fade-in" style={{ animationDelay: "400ms" }}>
               <CardContent className="p-6">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Clock className="h-6 w-6 text-primary" />
+                  <Mail className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">Atendimento</h3>
-                <p className="text-sm text-muted-foreground">24/7 Suporte</p>
+                <h3 className="font-semibold mb-2">E-mail</h3>
+                <p className="text-sm text-muted-foreground">contato@rvcarlocacoes.com.br</p>
               </CardContent>
             </Card>
           </div>

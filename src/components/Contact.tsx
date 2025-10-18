@@ -123,10 +123,15 @@ const Contact = () => {
                   <Mail className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg mb-1">Horário de Atendimento</h3>
-                  <p className="text-muted-foreground">Segunda a Sábado: 8h às 20h</p>
-                  <p className="text-muted-foreground">Domingo: 9h às 18h</p>
-                  <p className="text-sm text-primary mt-2">Suporte emergencial 24/7</p>
+                  <h3 className="font-semibold text-lg mb-1">E-mail</h3>
+                  <p className="text-muted-foreground">contato@rvcarlocacoes.com.br</p>
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto text-primary"
+                    onClick={() => window.location.href = "mailto:contato@rvcarlocacoes.com.br"}
+                  >
+                    Enviar E-mail
+                  </Button>
                 </div>
               </CardContent>
             </Card>

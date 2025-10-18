@@ -30,12 +30,36 @@ A **RV Car Solutions** é uma empresa especializada em locação de veículos pa
 - **Sobre**: Informações da empresa e localização
 - **Contato**: Formulário integrado com WhatsApp
 
+### 🔐 **Painel Administrativo**
+
+> **Novo!** Sistema completo de gerenciamento de veículos com sincronização em nuvem
+
+- **Login Seguro**: Autenticação para administradores
+- **CRUD de Veículos**: Adicionar, editar e remover veículos
+- **Controle de Disponibilidade**: Marcar veículos como disponível/indisponível
+- **Efeito Visual**: Veículos indisponíveis aparecem em tons de cinza
+- **Dashboard Estatístico**: Visão geral da frota
+- **Interface Responsiva**: Gerenciamento em desktop e mobile
+- **🔄 Backend PHP + MySQL**: API REST para sincronização entre dispositivos
+- **💾 Hospedagem Própria**: Tudo no seu servidor cPanel (sem dependências externas)
+
+**Acesso:** `/admin/login` | **Credenciais padrão:** `admin / rvcar2024`  
+📖 **Documentação completa:** [ADMIN-GUIDE.md](./ADMIN-GUIDE.md)  
+🔧 **Setup local:** [LOCAL-SETUP.md](./docs/LOCAL-SETUP.md)  
+🧪 **Guia de testes:** [TESTING.md](./docs/TESTING.md)  
+📦 **Resumo Backend:** [PHP-BACKEND-SUMMARY.md](./PHP-BACKEND-SUMMARY.md)
+
 ### 📱 **Recursos Interativos**
 
-- **WhatsApp Integration**: Botão flutuante e links diretos
+- **Sistema de Modais Consultor**: Modal de seleção de serviço (Locação/Investimento)
+- **Modal de Locação**: Formulário com seleção de veículos disponíveis do banco de dados
+- **Modal de Investimento**: Formulário para proprietários interessados em investir
+- **WhatsApp Integration**: Botão flutuante (aparece após 10s) com integração aos modais
+- **Mensagens Personalizadas**: Cada modal gera mensagem WhatsApp formatada
 - **Formulário de Contato**: Envia dados diretamente para WhatsApp
 - **Navegação Smooth**: Scroll suave entre seções
 - **Animações**: Transições elegantes com CSS animations
+- **Catálogo Dinâmico**: Atualização em tempo real via admin
 
 ### 🎨 **Design Responsivo**
 
@@ -113,14 +137,31 @@ rv-car-solutions/
 │   │   ├── 📋 About.tsx         # Sobre a empresa
 │   │   ├── 📞 Contact.tsx       # Formulário de contato
 │   │   ├── 🦶 Footer.tsx        # Rodapé
-│   │   ├── 💬 WhatsAppButton.tsx # Botão flutuante WhatsApp
+│   │   ├── 💬 WhatsAppButton.tsx # Botão flutuante WhatsApp (10s delay)
+│   │   ├── 🎯 ConsultantModal.tsx # Modal de seleção de serviço
+│   │   ├── 🚗 RentalModal.tsx    # Modal de locação de veículos
+│   │   ├── 💼 InvestmentModal.tsx # Modal de investimento
 │   │   └── 📁 ui/              # Componentes UI (shadcn/ui)
 │   ├── 📁 hooks/               # React Hooks customizados
 │   ├── 📁 lib/                 # Utilitários
-│   │   └── 🔧 utils.ts         # Funções utilitárias
-│   └── 📁 pages/               # Páginas da aplicação
-│       ├── 🏠 Index.tsx        # Página principal
-│       └── ❌ NotFound.tsx     # Página 404
+│   │   ├── 🔧 utils.ts         # Funções utilitárias
+│   │   ├── 🗄️ vehicleManager.ts # Gerenciador de veículos (API)
+│   │   └── ☁️ supabase.ts      # Cliente Supabase (legado)
+│   ├── 📁 pages/               # Páginas da aplicação
+│   │   ├── 🏠 Index.tsx        # Página principal
+│   │   ├── 🔐 AdminLogin.tsx   # Login administrativo
+│   │   ├── 📊 AdminDashboard.tsx # Dashboard admin
+│   │   └── ❌ NotFound.tsx     # Página 404
+│   └── 📁 types/               # TypeScript types
+│       └── 🔒 admin.ts         # Types do painel admin
+├── 📁 api/                     # Backend PHP
+│   ├── 📄 config.php           # Configuração do banco de dados
+│   ├── 📄 vehicles.php         # API REST de veículos
+│   ├── 📄 schema.sql           # Schema do banco
+│   └── 📄 install.php          # Script de instalação
+├── 📁 docs/                    # Documentação
+│   ├── 📄 LOCAL-SETUP.md       # Guia de configuração local
+│   └── 📄 TESTING.md           # Guia de testes
 ```
 
 ## 🎨 Design System
@@ -173,22 +214,39 @@ Utiliza o **shadcn/ui** como base, incluindo:
 
 ### **Funcionalidades**
 
-- **Botão Flutuante**: Sempre visível na tela
+- **Botão Flutuante**: Aparece após 10 segundos com animação
+- **Integração com Modais**: Abre sistema de seleção de serviço
+- **Botão Fechável**: Pode ser fechado pelo usuário (salva no sessionStorage)
 - **Links Diretos**: Em botões e formulários
-- **Mensagens Personalizadas**: Contexto específico por seção
+- **Mensagens Personalizadas**: Contexto específico por modal
 - **Contato Principal**: (47) 98448-5492
+- **Email**: contato@rvcarlocacoes.com.br
 
 ### **Mensagens Automáticas**
 
 ```javascript
-// Hero Section
-"Olá! Gostaria de alugar um carro para trabalhar com aplicativo.";
+// Hero Section - Botão "Fale com um consultor"
+// Abre ConsultantModal com opções: Locação ou Investimento
 
-// Formulário de Contato
-"Nome: [nome]\nEmail: [email]\nTelefone: [telefone]\nMensagem: [mensagem]";
+// Modal de Locação
+"Olá! Gostaria de alugar um veículo:\n\n" +
+  "🚗 Veículo: [modelo selecionado]\n" +
+  "👤 Nome: [nome]\n" +
+  "📱 Telefone: [telefone com máscara]\n" +
+  "💬 Mensagem: [mensagem opcional]";
 
-// Investimento
-"Olá! Gostaria de saber mais sobre investimento em frota de locação.";
+// Modal de Investimento
+"Olá! Tenho interesse em investir na frota:\n\n" +
+  "🚗 Meu Veículo:\n" +
+  "Marca: [marca]\n" +
+  "Modelo: [modelo]\n" +
+  "Ano: [ano]\n\n" +
+  "👤 Nome: [nome]\n" +
+  "📱 Telefone: [telefone com máscara]\n" +
+  "💬 Mensagem: [mensagem]";
+
+// Investimento (seção)
+("Olá! Gostaria de saber mais sobre investimento em frota de locação.");
 ```
 
 ## 🚀 Instalação e Configuração
@@ -412,30 +470,39 @@ npm run build
 
 ## 📈 Roadmap
 
+### **✅ Concluído**
+
+- [x] Sistema de reservas via WhatsApp (modais)
+- [x] Painel administrativo completo
+- [x] Backend PHP + MySQL
+- [x] Sistema de sincronização
+- [x] Deploy em cPanel (documentado)
+- [x] Suporte a desenvolvimento em rede local
+
 ### **Próximas Features**
 
-- [ ] Sistema de reservas online
-- [ ] Painel administrativo
 - [ ] Integração com API de pagamentos
 - [ ] Chat em tempo real
 - [ ] PWA (Progressive Web App)
 - [ ] Dashboard para investidores
 - [ ] Sistema de avaliações
 - [ ] Multilíngue (EN/ES)
+- [ ] Notificações push
+- [ ] Sistema de agendamento de visitas
 
 ## 📞 Suporte
 
 ### **Contatos**
 
 - **WhatsApp Business**: (47) 98448-5492
-- **Email**: contato@rvcar.com.br
-- **Endereço**: Blumenau - Santa Catarina
+- **Email**: contato@rvcarlocacoes.com.br
+- **Localização**: Blumenau - Santa Catarina
 
 ### **Horários de Atendimento**
 
-- **Segunda a Sábado**: 8h às 20h
-- **Domingo**: 9h às 18h
-- **Emergencial**: 24/7
+- **Segunda a Sexta**: 8h às 18h
+- **Sábado**: 9h às 13h
+- **WhatsApp 24/7**: Atendimento automatizado
 
 ## 📄 Licença
 
@@ -444,6 +511,21 @@ Este projeto está sob a licença MIT. Consulte o arquivo `LICENSE` para mais de
 ---
 
 ## 📋 Changelog
+
+### **v2.0.0** (Outubro 2024)
+
+- ✅ Sistema completo de modais para consultor
+- ✅ Modal de seleção de serviço (Locação/Investimento)
+- ✅ Modal de locação com veículos do banco de dados
+- ✅ Modal de investimento para proprietários
+- ✅ WhatsApp Button com delay de 10 segundos
+- ✅ Botão WhatsApp integrado aos modais
+- ✅ Email adicionado em múltiplas seções (Contact, About, Footer)
+- ✅ Backend PHP + MySQL completo
+- ✅ Painel administrativo funcional
+- ✅ Sistema de sincronização entre dispositivos
+- ✅ Documentação completa de deploy (cPanel)
+- ✅ Suporte a redes privadas (desenvolvimento local em mobile)
 
 ### **v1.0.0** (2024)
 

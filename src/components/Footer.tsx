@@ -73,7 +73,12 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-dark-foreground/70">Atendimento 24/7</span>
+                <a
+                  href="mailto:contato@rvcarlocacoes.com.br"
+                  className="text-dark-foreground/70 hover:text-primary transition-colors"
+                >
+                  contato@rvcarlocacoes.com.br
+                </a>
               </li>
             </ul>
           </div>

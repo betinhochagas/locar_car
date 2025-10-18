@@ -1,11 +1,11 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
+import ConsultantModal from "./ConsultantModal";
 
 const Hero = () => {
-  const handleWhatsApp = () => {
-    window.open("https://wa.me/5547984485492", "_blank");
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-16">
@@ -39,7 +39,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
               size="lg"
-              onClick={handleWhatsApp}
+              onClick={() => setIsModalOpen(true)}
               className="text-base sm:text-lg group"
             >
               Fale com um consultor
@@ -54,6 +54,9 @@ const Hero = () => {
               Ver Veículos
             </Button>
           </div>
+
+          {/* Modal de Consultor */}
+          <ConsultantModal open={isModalOpen} onOpenChange={setIsModalOpen} />
 
           <div className="mt-12 grid grid-cols-3 gap-6 max-w-xl">
             <div className="text-center">
