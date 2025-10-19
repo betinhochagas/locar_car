@@ -1,0 +1,307 @@
+================================================================================
+  RV CAR SOLUTIONS - PASTA DE DEPLOY PRONTA
+================================================================================
+
+Data: 19/10/2025
+Versão: 2.1.0 (Final)
+Status: 100% PRONTO PARA UPLOAD
+
+================================================================================
+  O QUE É ESTA PASTA?
+================================================================================
+
+Esta pasta contém TODOS os arquivos necessários para rodar o sistema RV Car
+na hospedagem. Basta compactar esta pasta em ZIP e extrair no servidor.
+
+================================================================================
+  ESTRUTURA DOS ARQUIVOS
+================================================================================
+
+deploy-rvcar/
+│
+├── index.html              (Página principal - SPA React)
+├── .htaccess               (Configuração Apache - SUBDIRETÓRIO /rvcar/)
+├── favicon.png             (Ícone do site)
+├── placeholder.svg         (Placeholder para veículos)
+├── robots.txt              (SEO)
+├── 404.html                (Página de erro)
+│
+├── assets/                 (Frontend compilado)
+│   ├── index-C-h9FbRP.js   (JavaScript - 428 KB)
+│   ├── index-O3gN9mho.css  (CSS - 65 KB)
+│   ├── hero-bg-xxx.jpg     (Imagens)
+│   └── investment-xxx.jpg
+│
+├── api/                    (Backend PHP)
+│   ├── .htaccess           (CORS configurado)
+│   ├── vehicles.php        (CRUD de veículos)
+│   ├── auth.php            (Autenticação e login)
+│   └── upload.php          (Upload de imagens)
+│   └── config.php          (NÃO ESTÁ AQUI - será gerado pelo instalador)
+│
+├── install/                (Instalador Web)
+│   ├── index.php           (Wizard de instalação)
+│   └── GUIA-INSTALADOR.md  (Documentação)
+│
+└── uploads/                (Pasta de uploads)
+    └── vehicles/           (Imagens dos veículos)
+
+================================================================================
+  INSTRUÇÕES DE DEPLOY (PASSO A PASSO)
+================================================================================
+
+PASSO 1: CRIAR O ZIP
+---------------------
+1. Clique direito na pasta "deploy-rvcar"
+2. Enviar para > Pasta compactada (ou use WinRAR/7-Zip)
+3. Renomeie para: deploy-rvcar.zip
+
+
+PASSO 2: UPLOAD PARA O SERVIDOR
+--------------------------------
+1. Acesse cPanel: https://srv41.hinetworks.com.br:2083
+2. Faça login
+3. File Manager > public_html
+4. Navegue até a pasta: public_html/rvcar/
+5. DELETE tudo que estiver lá dentro (se houver)
+6. Clique em "Upload" (botão azul no topo)
+7. Selecione o arquivo: deploy-rvcar.zip
+8. Aguarde upload completar (0.5 MB)
+
+
+PASSO 3: EXTRAIR OS ARQUIVOS
+-----------------------------
+1. Ainda no File Manager
+2. Clique direito no arquivo: deploy-rvcar.zip
+3. Selecione "Extract"
+4. Vai criar a pasta: deploy-rvcar/
+5. MOVA todo conteúdo de deploy-rvcar/ para rvcar/
+   (ou seja, os arquivos devem ficar direto em /rvcar/, não em /rvcar/deploy-rvcar/)
+6. DELETE a pasta vazia deploy-rvcar/
+7. DELETE o arquivo deploy-rvcar.zip
+
+
+PASSO 4: RODAR O INSTALADOR
+----------------------------
+1. Acesse no navegador: https://bnutech.com.br/rvcar/install/
+2. Siga os 4 passos do instalador:
+
+   PASSO 1 - Verificação:
+   ✓ PHP 7.4+
+   ✓ PDO MySQL
+   ✓ GD Library
+   ✓ Permissões de escrita
+
+   PASSO 2 - Configuração do Banco:
+   - Host: localhost
+   - Database: bnutechc_rvcar
+   - Usuário: bnutechc_rvcar
+   - Senha: R.chagas1988
+   - Prefixo: (deixe vazio)
+
+   PASSO 3 - Instalação:
+   - Criará 3 tabelas (vehicles, admins, admin_tokens)
+   - Inserirá 8 veículos padrão
+   - Criará usuário admin
+   - Gerará config.php
+
+   PASSO 4 - Conclusão:
+   - Anote as credenciais do admin
+   - Usuário: admin
+   - Senha: rvcar2024
+
+
+PASSO 5: SEGURANÇA (IMPORTANTE!)
+---------------------------------
+1. Volte ao File Manager
+2. DELETE a pasta: /rvcar/install/
+3. Isso é CRÍTICO para segurança!
+
+
+PASSO 6: TESTAR O SISTEMA
+--------------------------
+1. Site: https://bnutech.com.br/rvcar/
+   ✓ 8 veículos aparecem (com placeholder)
+   ✓ Layout responsivo
+   ✓ Botão WhatsApp funciona
+
+2. Admin: https://bnutech.com.br/rvcar/admin/login
+   ✓ Login: admin / rvcar2024
+   ✓ Dashboard aparece
+   ✓ Lista de veículos
+
+3. Funcionalidades:
+   ✓ Adicionar novo veículo
+   ✓ Editar veículo existente
+   ✓ Upload de imagem
+   ✓ Remover veículo
+   ✓ Ativar/Desativar disponibilidade
+
+================================================================================
+  APÓS O DEPLOY
+================================================================================
+
+IMEDIATO:
+---------
+1. Fazer upload de fotos reais dos 8 veículos
+   (substitui os placeholders)
+
+2. Alterar senha do admin
+   (por enquanto está: rvcar2024)
+
+3. Testar em dispositivos móveis
+   (iPhone, Android, tablets)
+
+
+OPCIONAL:
+---------
+4. Configurar SSL/HTTPS no cPanel
+   (Let's Encrypt - gratuito)
+
+5. Fazer backup do banco de dados
+   (phpMyAdmin > Export)
+
+6. Configurar Google Analytics
+   (se desejar monitorar acessos)
+
+================================================================================
+  CONFIGURAÇÕES IMPORTANTES
+================================================================================
+
+URLS DO SISTEMA:
+----------------
+- Site: https://bnutech.com.br/rvcar/
+- Admin: https://bnutech.com.br/rvcar/admin/login
+- API: https://bnutech.com.br/rvcar/api/
+
+BANCO DE DADOS:
+---------------
+- Host: localhost
+- Database: bnutechc_rvcar
+- User: bnutechc_rvcar
+- Pass: R.chagas1988
+
+ADMIN PADRÃO:
+-------------
+- Usuário: admin
+- Senha: rvcar2024
+- ALTERAR após primeiro login!
+
+VEÍCULOS PADRÃO (8):
+--------------------
+1. Fiat Mobi - R$650/semana
+2. Renault Kwid - R$700/semana
+3. Fiat Uno - R$650/semana
+4. Chevrolet Onix - R$750/semana
+5. VW Gol - R$700/semana
+6. VW Voyage - R$750/semana
+7. Renault Sandero - R$800/semana
+8. Nissan Versa - R$850/semana
+
+================================================================================
+  ARQUIVOS QUE SERÃO CRIADOS PELO INSTALADOR
+================================================================================
+
+/rvcar/api/config.php
+---------------------
+Este arquivo NÃO está incluído na pasta deploy-rvcar porque contém:
+- Credenciais do banco de dados
+- Configurações específicas do servidor
+
+Ele será gerado automaticamente pelo instalador no PASSO 3.
+
+================================================================================
+  ESTRUTURA FINAL NO SERVIDOR
+================================================================================
+
+Após instalar, você terá:
+
+/public_html/rvcar/
+│
+├── index.html
+├── .htaccess
+├── assets/
+├── api/
+│   ├── vehicles.php
+│   ├── auth.php
+│   ├── upload.php
+│   ├── config.php         ← CRIADO PELO INSTALADOR
+│   └── .htaccess
+├── uploads/
+│   └── vehicles/
+│       └── (suas fotos aqui)
+└── (install/ foi deletado por segurança)
+
+================================================================================
+  PERMISSÕES NECESSÁRIAS
+================================================================================
+
+Certifique-se de que estas pastas têm permissão de escrita (755 ou 775):
+
+/rvcar/api/                 (para criar config.php)
+/rvcar/uploads/             (para upload de imagens)
+/rvcar/uploads/vehicles/    (para salvar fotos)
+
+Geralmente o cPanel já configura isso automaticamente.
+
+================================================================================
+  TROUBLESHOOTING
+================================================================================
+
+PROBLEMA: 404 ao acessar /rvcar/admin/login
+SOLUÇÃO: Verifique se o .htaccess tem "RewriteBase /rvcar/"
+
+PROBLEMA: Erro ao fazer login
+SOLUÇÃO: Verifique se auth.php existe em /rvcar/api/
+
+PROBLEMA: Não consegue fazer upload de imagens
+SOLUÇÃO: Verifique se upload.php existe e se /uploads/vehicles/ tem permissão
+
+PROBLEMA: Instalador dá erro de conexão
+SOLUÇÃO: Verifique credenciais do banco de dados
+
+PROBLEMA: Assets não carregam (CSS/JS)
+SOLUÇÃO: Limpe cache do navegador (Ctrl+Shift+Delete)
+
+================================================================================
+  SUPORTE
+================================================================================
+
+GitHub: https://github.com/betinhochagas/rvcar
+Documentação: Veja os arquivos .md na raiz do projeto
+
+Documentos disponíveis:
+- PRONTO-PARA-PRODUCAO.md
+- CORRECAO-HTACCESS-URGENTE.md
+- CORRECAO-APIS-FALTANDO.md
+- SOLUCAO-RAPIDA-LOGIN.md
+- ANALISE-PRODUCAO.md
+
+================================================================================
+  CHECKLIST FINAL
+================================================================================
+
+Antes de considerar o deploy completo:
+
+□ Site carrega em https://bnutech.com.br/rvcar/
+□ 8 veículos aparecem na home
+□ Login funciona no admin
+□ Dashboard mostra lista de veículos
+□ Pode adicionar novo veículo
+□ Pode editar veículo existente
+□ Pode fazer upload de imagem
+□ Pode remover veículo
+□ Botão WhatsApp funciona
+□ Site responsivo em mobile
+□ Pasta /install/ foi deletada
+□ Sem erros no Console (F12)
+□ Senha do admin foi alterada
+
+================================================================================
+  BOA SORTE COM O DEPLOY! 🚀
+================================================================================
+
+Esta pasta foi gerada automaticamente com TODOS os arquivos necessários.
+Basta compactar, fazer upload, extrair e rodar o instalador.
+
+Qualquer dúvida, consulte a documentação no repositório GitHub.
