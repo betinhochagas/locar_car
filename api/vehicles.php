@@ -18,25 +18,46 @@
 // CORS CONFIGURATION - DEVE SER A PRIMEIRA COISA NO ARQUIVO
 // ============================================================================
 
-// Permitir origens específicas
-$allowed_origins = [
-    'http://localhost:8080',
-    'http://localhost:5173',
-    'http://127.0.0.1:8080',
-    'http://127.0.0.1:5173',
-    'http://192.168.15.163:8080', // IP da rede local
-];
+// Detectar se está em produção ou desenvolvimento
+$is_production = !in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1']);
 
-// Pegar a origem da requisição
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+if ($is_production) {
+    // PRODUÇÃO: Permitir apenas o próprio domínio
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $domain = $_SERVER['SERVER_NAME'];
 
-// Se a origem está na lista permitida, adicionar APENAS UMA VEZ
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: " . $origin);
-    header('Access-Control-Allow-Credentials: true');
+    // Lista de domínios permitidos em produção
+    $allowed_origins = [
+        $protocol . '://' . $domain,
+        'https://' . $domain,
+        'http://' . $domain,
+    ];
+
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+    if (in_array($origin, $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $origin);
+    } else {
+        // Mesmo domínio: não precisa CORS
+        header("Access-Control-Allow-Origin: " . $protocol . '://' . $domain);
+    }
 } else {
-    // Em desenvolvimento, permitir qualquer origem (SEM CREDENTIALS)
-    header("Access-Control-Allow-Origin: *");
+    // DESENVOLVIMENTO: Permitir origens de teste
+    $allowed_origins = [
+        'http://localhost:8080',
+        'http://localhost:5173',
+        'http://127.0.0.1:8080',
+        'http://127.0.0.1:5173',
+    ];
+
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+    if (in_array($origin, $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $origin);
+        header('Access-Control-Allow-Credentials: true');
+    } else {
+        header("Access-Control-Allow-Origin: *");
+    }
 }
 
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS');

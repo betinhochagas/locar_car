@@ -147,23 +147,88 @@ function performInstallation()
 
         // Criar tabela vehicles
         $sql = "CREATE TABLE IF NOT EXISTS `vehicles` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `name` varchar(100) NOT NULL,
-            `price` varchar(20) NOT NULL,
-            `image` varchar(255) NOT NULL,
-            `category` varchar(50) DEFAULT 'Econômico',
-            `features` text,
-            `available` tinyint(1) DEFAULT 1,
-            `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`)
+            `id` VARCHAR(50) PRIMARY KEY,
+            `name` VARCHAR(255) NOT NULL,
+            `price` VARCHAR(50) NOT NULL,
+            `image` TEXT,
+            `features` JSON,
+            `available` BOOLEAN DEFAULT TRUE NOT NULL,
+            `created_at` DATETIME NOT NULL,
+            `updated_at` DATETIME NOT NULL,
+            INDEX idx_available (available),
+            INDEX idx_created_at (created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         if (!$conn->query($sql)) {
             return [
                 'success' => false,
-                'message' => 'Erro ao criar tabela: ' . $conn->error
+                'message' => 'Erro ao criar tabela vehicles: ' . $conn->error
             ];
+        }
+
+        // Criar tabela admins
+        $sql = "CREATE TABLE IF NOT EXISTS `admins` (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `username` VARCHAR(50) UNIQUE NOT NULL,
+            `password` VARCHAR(255) NOT NULL,
+            `name` VARCHAR(100) NOT NULL,
+            `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_username (username)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+        if (!$conn->query($sql)) {
+            return [
+                'success' => false,
+                'message' => 'Erro ao criar tabela admins: ' . $conn->error
+            ];
+        }
+
+        // Criar tabela admin_tokens
+        $sql = "CREATE TABLE IF NOT EXISTS `admin_tokens` (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `admin_id` INT NOT NULL,
+            `token` VARCHAR(64) UNIQUE NOT NULL,
+            `expires_at` DATETIME NOT NULL,
+            `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE CASCADE,
+            INDEX idx_token (token),
+            INDEX idx_expires (expires_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+        if (!$conn->query($sql)) {
+            return [
+                'success' => false,
+                'message' => 'Erro ao criar tabela admin_tokens: ' . $conn->error
+            ];
+        }
+
+        // Criar pasta de uploads
+        $uploadsDir = dirname(__DIR__) . '/uploads/vehicles/';
+        if (!file_exists($uploadsDir)) {
+            if (!mkdir($uploadsDir, 0755, true)) {
+                return [
+                    'success' => false,
+                    'message' => 'Erro ao criar pasta de uploads'
+                ];
+            }
+            // Criar .htaccess na pasta uploads
+            file_put_contents(dirname($uploadsDir) . '/.htaccess', "Options -Indexes\n<FilesMatch \"\.(jpg|jpeg|png|gif|webp)$\">\n    Allow from all\n</FilesMatch>");
+        }
+
+        // Verificar se já existem admins
+        $result = $conn->query("SELECT COUNT(*) as count FROM admins");
+        $row = $result->fetch_assoc();
+
+        if ($row['count'] == 0) {
+            // Inserir admin padrão (senha: rvcar2024)
+            $hashedPassword = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
+            $stmt = $conn->prepare("INSERT INTO admins (username, password, name) VALUES (?, ?, ?)");
+            $username = 'admin';
+            $name = 'Administrador';
+            $stmt->bind_param("sss", $username, $hashedPassword, $name);
+            $stmt->execute();
+            $stmt->close();
         }
 
         // Verificar se já existem veículos
@@ -171,19 +236,19 @@ function performInstallation()
         $row = $result->fetch_assoc();
 
         if ($row['count'] == 0) {
-            // Inserir veículos padrão
+            // Inserir veículos padrão com novo formato
             $vehicles = [
-                ['Fiat Mobi', 'R$ 650', '/assets/mobi.jpg', 'Econômico', 'Ar condicionado, Direção hidráulica, Rádio'],
-                ['Renault Kwid', 'R$ 650', '/assets/kwid.jpg', 'Compacto', 'Baixo consumo, Tecnologia moderna'],
-                ['Fiat Uno', 'R$ 650', '/assets/uno.jpg', 'Popular', 'Confiável, Peças acessíveis, Econômico'],
-                ['Chevrolet Onix', 'R$ 700', '/assets/onix.jpg', 'Premium', 'Conforto superior, Tecnologia avançada'],
-                ['VW Gol', 'R$ 700', '/assets/gol.jpg', 'Líder', 'Manutenção fácil, Design moderno'],
-                ['VW Voyage', 'R$ 700', '/assets/voyage.jpg', 'Sedan', 'Porta-malas amplo, Elegante'],
-                ['Renault Sandero', 'R$ 700', '/assets/sandero.jpg', 'Versátil', 'Espaço interno, Design arrojado'],
-                ['Nissan Versa', 'R$ 700', '/assets/versa.jpg', 'Premium', 'Tecnologia avançada, Conforto total']
+                ['veh_1', 'Fiat Mobi', 'R$650', '/rvcar/assets/mobi.jpg', '["Econômico","Ar Condicionado","Direção Hidráulica","Perfeito para cidade"]'],
+                ['veh_2', 'Renault Kwid', 'R$650', '/rvcar/assets/kwid.jpg', '["Compacto","Baixo consumo","Moderna tecnologia","Fácil manuseio"]'],
+                ['veh_3', 'Fiat Uno', 'R$650', '/rvcar/assets/uno.jpg', '["Confiável","Peças acessíveis","Ótimo custo-benefício","Espaçoso"]'],
+                ['veh_4', 'Chevrolet Onix', 'R$700', '/rvcar/assets/onix.jpg', '["Modelo popular","Conforto superior","Tecnologia moderna","Bom desempenho"]'],
+                ['veh_5', 'VW Gol', 'R$700', '/rvcar/assets/gol.jpg', '["Líder de vendas","Confiabilidade","Manutenção fácil","Design moderno"]'],
+                ['veh_6', 'VW Voyage', 'R$700', '/rvcar/assets/voyage.jpg', '["Sedan espaçoso","Porta-malas amplo","Conforto extra","Elegante"]'],
+                ['veh_7', 'Renault Sandero', 'R$700', '/rvcar/assets/sandero.jpg', '["Versátil","Espaço interno","Design arrojado","Bom desempenho"]'],
+                ['veh_8', 'Nissan Versa', 'R$700', '/rvcar/assets/versa.jpg', '["Sedan premium","Espaço superior","Tecnologia avançada","Conforto total"]']
             ];
 
-            $stmt = $conn->prepare("INSERT INTO vehicles (name, price, image, category, features) VALUES (?, ?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO vehicles (id, name, price, image, features, available, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())");
 
             foreach ($vehicles as $vehicle) {
                 $stmt->bind_param("sssss", $vehicle[0], $vehicle[1], $vehicle[2], $vehicle[3], $vehicle[4]);

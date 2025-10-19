@@ -1,4 +1,5 @@
 <?php
+
 /**
  * RV Car Solutions - Upload de Imagens
  * 
@@ -8,20 +9,45 @@
 // ============================================================================
 // CORS CONFIGURATION
 // ============================================================================
-$allowed_origins = [
-    'http://localhost:8080',
-    'http://localhost:5173',
-    'http://127.0.0.1:8080',
-    'http://127.0.0.1:5173',
-];
 
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+// Detectar se está em produção ou desenvolvimento
+$is_production = !in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1']);
 
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: " . $origin);
-    header('Access-Control-Allow-Credentials: true');
+if ($is_production) {
+    // PRODUÇÃO: Permitir apenas o próprio domínio
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $domain = $_SERVER['SERVER_NAME'];
+
+    $allowed_origins = [
+        $protocol . '://' . $domain,
+        'https://' . $domain,
+        'http://' . $domain,
+    ];
+
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+    if (in_array($origin, $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $origin);
+    } else {
+        header("Access-Control-Allow-Origin: " . $protocol . '://' . $domain);
+    }
 } else {
-    header("Access-Control-Allow-Origin: *");
+    // DESENVOLVIMENTO: Permitir origens de teste
+    $allowed_origins = [
+        'http://localhost:8080',
+        'http://localhost:5173',
+        'http://127.0.0.1:8080',
+        'http://127.0.0.1:5173',
+    ];
+
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+    if (in_array($origin, $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $origin);
+        header('Access-Control-Allow-Credentials: true');
+    } else {
+        header("Access-Control-Allow-Origin: *");
+    }
 }
 
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -51,13 +77,15 @@ if (!file_exists($upload_dir)) {
 // ============================================================================
 // FUNÇÕES AUXILIARES
 // ============================================================================
-function sendResponse($data, $code = 200) {
+function sendResponse($data, $code = 200)
+{
     http_response_code($code);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
-function sendError($message, $code = 400) {
+function sendError($message, $code = 400)
+{
     sendResponse(['error' => $message], $code);
 }
 
@@ -139,7 +167,8 @@ sendResponse([
 /**
  * Otimizar e redimensionar imagem
  */
-function optimizeImage($path, $mime_type) {
+function optimizeImage($path, $mime_type)
+{
     $max_width = 1200;
     $max_height = 900;
     $quality = 85;
@@ -176,7 +205,7 @@ function optimizeImage($path, $mime_type) {
 
         // Criar nova imagem redimensionada
         $new_image = imagecreatetruecolor($new_width, $new_height);
-        
+
         // Preservar transparência para PNG
         if ($mime_type === 'image/png') {
             imagealphablending($new_image, false);
@@ -187,10 +216,16 @@ function optimizeImage($path, $mime_type) {
 
         // Redimensionar
         imagecopyresampled(
-            $new_image, $image,
-            0, 0, 0, 0,
-            $new_width, $new_height,
-            $width, $height
+            $new_image,
+            $image,
+            0,
+            0,
+            0,
+            0,
+            $new_width,
+            $new_height,
+            $width,
+            $height
         );
 
         // Salvar imagem otimizada

@@ -5,6 +5,7 @@
 ### 1. **Sistema de Upload de Imagens** 📸
 
 #### Funcionalidades:
+
 - ✅ Upload direto de imagens pelo painel admin
 - ✅ Suporte para JPG, PNG e WebP
 - ✅ Limite de 5MB por arquivo
@@ -15,11 +16,13 @@
 - ✅ Campo alternativo para URL externa
 
 #### API:
+
 - **Endpoint:** `/rvcar/api/upload.php`
 - **Método:** POST (multipart/form-data)
 - **Campo:** `image` (arquivo)
 
 #### Arquivos:
+
 - **Backend:** `api/upload.php`
 - **Frontend:** `src/lib/uploadManager.ts`
 - **Pasta:** `/uploads/vehicles/` (criada automaticamente)
@@ -29,6 +32,7 @@
 ### 2. **Sistema de Autenticação Real** 🔐
 
 #### Funcionalidades:
+
 - ✅ Login com validação no backend
 - ✅ Senhas criptografadas (bcrypt)
 - ✅ Tokens de sessão (7 dias)
@@ -37,12 +41,14 @@
 - ✅ Alteração de senha (futuro)
 
 #### Credenciais Padrão:
+
 ```
 Usuário: admin
 Senha: rvcar2024
 ```
 
 #### API:
+
 - **Endpoint:** `/rvcar/api/auth.php`
 - **Ações:**
   - `login` - Fazer login
@@ -50,6 +56,7 @@ Senha: rvcar2024
   - `change_password` - Alterar senha (implementado)
 
 #### Tabelas no Banco:
+
 ```sql
 -- Administradores
 admins (
@@ -72,6 +79,7 @@ admin_tokens (
 ```
 
 #### Arquivos:
+
 - **Backend:** `api/auth.php`
 - **Frontend:** `src/lib/authManager.ts`
 - **Páginas:** `src/pages/AdminLogin.tsx`, `src/pages/AdminDashboard.tsx`
@@ -81,43 +89,51 @@ admin_tokens (
 ### 3. **Veículos Padrão no Banco** 🚙
 
 #### 8 Veículos Cadastrados:
+
 1. **Fiat Mobi** - R$650/sem
+
    - Econômico
    - Ar Condicionado
    - Direção Hidráulica
    - Perfeito para cidade
 
 2. **Renault Kwid** - R$650/sem
+
    - Compacto
    - Baixo consumo
    - Moderna tecnologia
    - Fácil manuseio
 
 3. **Fiat Uno** - R$650/sem
+
    - Confiável
    - Peças acessíveis
    - Ótimo custo-benefício
    - Espaçoso
 
 4. **Chevrolet Onix** - R$700/sem
+
    - Modelo popular
    - Conforto superior
    - Tecnologia moderna
    - Bom desempenho
 
 5. **VW Gol** - R$700/sem
+
    - Líder de vendas
    - Confiabilidade
    - Manutenção fácil
    - Design moderno
 
 6. **VW Voyage** - R$700/sem
+
    - Sedan espaçoso
    - Porta-malas amplo
    - Conforto extra
    - Elegante
 
 7. **Renault Sandero** - R$700/sem
+
    - Versátil
    - Espaço interno
    - Design arrojado
@@ -136,6 +152,7 @@ admin_tokens (
 ### 4. **Estrutura do Banco de Dados Atualizada** 🗄️
 
 #### Tabela `vehicles` (Atualizada):
+
 ```sql
 CREATE TABLE vehicles (
     id VARCHAR(50) PRIMARY KEY,          -- ID único (veh_xxx)
@@ -152,13 +169,9 @@ CREATE TABLE vehicles (
 ```
 
 #### Características em JSON:
+
 ```json
-[
-  "Econômico",
-  "Ar Condicionado",
-  "Direção Hidráulica",
-  "Perfeito para cidade"
-]
+["Econômico", "Ar Condicionado", "Direção Hidráulica", "Perfeito para cidade"]
 ```
 
 ---
@@ -166,18 +179,21 @@ CREATE TABLE vehicles (
 ## 📦 Novos Arquivos API
 
 ### 1. `api/upload.php`
+
 - Upload de imagens
 - Validação de tipo e tamanho
 - Redimensionamento e otimização
 - Geração de nomes únicos
 
 ### 2. `api/auth.php`
+
 - Sistema de autenticação
 - Login com tokens
 - Verificação de sessão
 - Alteração de senha
 
 ### 3. `api/vehicles.php` (Atualizado)
+
 - CRUD completo
 - Suporte para JSON features
 - Toggle de disponibilidade
@@ -189,19 +205,23 @@ CREATE TABLE vehicles (
 ### O que foi adicionado:
 
 1. **Criação de 3 tabelas:**
+
    - `vehicles` (formato atualizado)
    - `admins`
    - `admin_tokens`
 
 2. **Criação de pastas:**
+
    - `/uploads/vehicles/` (para imagens)
    - `.htaccess` na pasta uploads (segurança)
 
 3. **Dados iniciais:**
+
    - 8 veículos padrão
    - 1 administrador padrão (admin/rvcar2024)
 
 4. **Estrutura atualizada:**
+
 ```
 rvcar/
 ├── assets/            # Arquivos do site (CSS, JS)
@@ -225,6 +245,7 @@ rvcar/
 ### Novas Funcionalidades:
 
 #### 1. **Upload de Imagens:**
+
 - Botão "Enviar Imagem"
 - Preview em tempo real
 - Barra de progresso
@@ -232,12 +253,14 @@ rvcar/
 - Campo alternativo para URL
 
 #### 2. **Autenticação:**
+
 - Login real com backend
 - Token de sessão
 - Logout funcional
 - Proteção de rotas
 
 #### 3. **Interface:**
+
 - Cards com preview de imagem
 - Botão de toggle disponibilidade
 - Modal de edição completo
@@ -249,22 +272,26 @@ rvcar/
 ## 📋 O que fazer agora:
 
 ### 1. **Rebuild do Projeto:**
+
 ```powershell
 npm run build
 ```
 
 ### 2. **Gerar Novo Instalador:**
+
 ```powershell
 .\criar-instalador.ps1
 ```
 
 ### 3. **Upload para Servidor:**
+
 - Extrair novo ZIP
 - Acessar `/rvcar/install/`
 - Executar instalação completa
 - Apagar pasta `/install/`
 
 ### 4. **Testar:**
+
 - [ ] Fazer login no admin
 - [ ] Adicionar veículo com upload de imagem
 - [ ] Editar veículo existente
@@ -277,6 +304,7 @@ npm run build
 Você tem 2 opções:
 
 **Opção A - Usar imagens locais:**
+
 1. Criar pasta `/rvcar/assets/` no servidor
 2. Adicionar arquivos:
    - `mobi.jpg`
@@ -289,6 +317,7 @@ Você tem 2 opções:
    - `versa.jpg`
 
 **Opção B - Atualizar via admin:**
+
 1. Acessar painel admin
 2. Editar cada veículo
 3. Fazer upload da imagem real
@@ -299,6 +328,7 @@ Você tem 2 opções:
 ## 🔒 Segurança
 
 ### Implementado:
+
 - ✅ Senhas criptografadas (bcrypt)
 - ✅ Tokens de sessão
 - ✅ Validação de tipos de arquivo
@@ -309,6 +339,7 @@ Você tem 2 opções:
 - ✅ .htaccess na pasta uploads
 
 ### Recomendado:
+
 - [ ] Alterar senha padrão após primeiro login
 - [ ] Configurar HTTPS no servidor
 - [ ] Adicionar rate limiting nas APIs
@@ -319,17 +350,20 @@ Você tem 2 opções:
 ## 📊 Estatísticas
 
 ### Backend:
+
 - **3 APIs:** auth.php, upload.php, vehicles.php
 - **3 Tabelas:** admins, admin_tokens, vehicles
 - **8 Veículos padrão**
 - **1 Admin padrão**
 
 ### Frontend:
+
 - **3 Managers:** authManager, uploadManager, vehicleManager
 - **4 Páginas:** Index, AdminLogin, AdminDashboard, NotFound
 - **30+ Componentes UI** (Shadcn)
 
 ### Arquivos Totais:
+
 - **PHP:** 5 arquivos
 - **TypeScript/React:** 40+ arquivos
 - **SQL:** 1 schema completo
@@ -340,7 +374,9 @@ Você tem 2 opções:
 ## 🆘 Troubleshooting
 
 ### Problema: Erro ao fazer upload
+
 **Solução:**
+
 1. Verificar permissões da pasta `/uploads/` (755)
 2. Verificar tamanho máximo do PHP:
    ```ini
@@ -349,7 +385,9 @@ Você tem 2 opções:
    ```
 
 ### Problema: Login não funciona
+
 **Solução:**
+
 1. Verificar se tabela `admins` foi criada
 2. Verificar se admin padrão existe:
    ```sql
@@ -357,7 +395,9 @@ Você tem 2 opções:
    ```
 
 ### Problema: Imagens não aparecem
+
 **Solução:**
+
 1. Verificar se pasta `/uploads/vehicles/` existe
 2. Verificar URL da imagem no banco
 3. Verificar .htaccess da pasta uploads
@@ -367,6 +407,7 @@ Você tem 2 opções:
 ## 📝 Changelog v2.1.0
 
 ### Adicionado:
+
 - ✨ Sistema completo de upload de imagens
 - ✨ Autenticação real com backend
 - ✨ Tabelas de admins e tokens
@@ -376,12 +417,14 @@ Você tem 2 opções:
 - ✨ Pasta de uploads com segurança
 
 ### Modificado:
+
 - 🔧 Estrutura da tabela vehicles (JSON features)
 - 🔧 Instalador completo atualizado
 - 🔧 Painel admin com upload
 - 🔧 Login com verificação real
 
 ### Corrigido:
+
 - 🐛 Basename do React Router (/rvcar)
 - 🐛 API URLs para subdiretório
 - 🐛 .htaccess com exclusões corretas
@@ -391,6 +434,7 @@ Você tem 2 opções:
 ## 🎯 Próximos Passos (Futuro)
 
 ### v2.2.0 (Planejado):
+
 - [ ] Painel de alteração de senha
 - [ ] Múltiplos administradores
 - [ ] Log de ações do admin
@@ -404,6 +448,7 @@ Você tem 2 opções:
 ## 📧 Suporte
 
 Para dúvidas ou problemas:
+
 1. Verificar esta documentação
 2. Verificar outros arquivos `.md` na raiz
 3. Verificar Console do navegador (F12)

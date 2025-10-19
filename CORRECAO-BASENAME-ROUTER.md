@@ -3,6 +3,7 @@
 ## ✅ Problema Resolvido!
 
 **Erro anterior:**
+
 ```
 🔴 404 Error: User attempted to access non-existent route: /rvcar/
 ```
@@ -17,13 +18,15 @@ React Router estava configurado com `basename = ''` (raiz), mas o app está roda
 ### **Arquivo:** `src/App.tsx`
 
 **ANTES (errado):**
+
 ```typescript
-const basename = '';  // ❌ Esperava rotas na raiz
+const basename = ""; // ❌ Esperava rotas na raiz
 ```
 
 **DEPOIS (correto):**
+
 ```typescript
-const basename = '/rvcar';  // ✅ Rotas com prefixo /rvcar
+const basename = "/rvcar"; // ✅ Rotas com prefixo /rvcar
 ```
 
 ---
@@ -33,10 +36,10 @@ const basename = '/rvcar';  // ✅ Rotas com prefixo /rvcar
 ### **Rotas Configuradas:**
 
 ```typescript
-<Route path="/" element={<Index />} />                    
+<Route path="/" element={<Index />} />
 // → https://bnutech.com.br/rvcar/ ✅
 
-<Route path="/admin/login" element={<AdminLogin />} />   
+<Route path="/admin/login" element={<AdminLogin />} />
 // → https://bnutech.com.br/rvcar/admin/login ✅
 
 <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -50,6 +53,7 @@ O `basename` é **automaticamente adicionado** pelo React Router!
 ## 📦 Novo Build Gerado
 
 **Arquivo JavaScript atualizado:**
+
 ```
 dist/assets/index-BdO4LyGh.js  (425 KB)
       ^^^^^^^^
@@ -57,6 +61,7 @@ dist/assets/index-BdO4LyGh.js  (425 KB)
 ```
 
 **Novo instalador:**
+
 ```
 rvcar-installer.zip  (0.48 MB)
 Data: 19/10/2025
@@ -79,6 +84,7 @@ Contém: Build com basename correto
 **OPÇÃO B: Upload Apenas Frontend**
 
 1. Delete no servidor:
+
    - `/rvcar/index.html`
    - `/rvcar/assets/`
 
@@ -91,11 +97,13 @@ Contém: Build com basename correto
 ### **2. Teste**
 
 Após upload, acesse:
+
 ```
 https://bnutech.com.br/rvcar/
 ```
 
 **Deve funcionar:**
+
 - ✅ Página inicial carrega
 - ✅ Sem erro 404
 - ✅ Veículos aparecem
@@ -106,11 +114,13 @@ https://bnutech.com.br/rvcar/
 ## 🧪 Verificação
 
 ### **Console (F12) ANTES:**
+
 ```
 ❌ 404 Error: User attempted to access non-existent route: /rvcar/
 ```
 
 ### **Console (F12) DEPOIS:**
+
 ```
 ✅ VehicleManager - API URL: /rvcar/api/vehicles.php
 ✅ Environment: production
@@ -122,27 +132,29 @@ https://bnutech.com.br/rvcar/
 
 ## 📊 Histórico de Correções
 
-| # | Problema | Solução | Status |
-|---|----------|---------|--------|
-| 1 | Config.php com MySQLi | Mudado para PDO | ✅ Resolvido |
-| 2 | Porta 3000 em produção | Cache do navegador | ✅ Resolvido |
-| 3 | Arquivos na pasta errada | Estrutura /rvcar/ | ✅ Resolvido |
-| 4 | .htaccess faltando | Criado com regras | ✅ Resolvido |
-| 5 | Assets retornam HTML | Regras .htaccess | ✅ Resolvido |
-| 6 | Arquivos desatualizados | Novo build enviado | ✅ Resolvido |
-| 7 | React Router basename | **ESTA CORREÇÃO** | ✅ **Resolvido!** |
+| #   | Problema                 | Solução            | Status            |
+| --- | ------------------------ | ------------------ | ----------------- |
+| 1   | Config.php com MySQLi    | Mudado para PDO    | ✅ Resolvido      |
+| 2   | Porta 3000 em produção   | Cache do navegador | ✅ Resolvido      |
+| 3   | Arquivos na pasta errada | Estrutura /rvcar/  | ✅ Resolvido      |
+| 4   | .htaccess faltando       | Criado com regras  | ✅ Resolvido      |
+| 5   | Assets retornam HTML     | Regras .htaccess   | ✅ Resolvido      |
+| 6   | Arquivos desatualizados  | Novo build enviado | ✅ Resolvido      |
+| 7   | React Router basename    | **ESTA CORREÇÃO**  | ✅ **Resolvido!** |
 
 ---
 
 ## 🎯 Resumo
 
 **Mudança crítica:**
+
 ```diff
 - const basename = '';
 + const basename = '/rvcar';
 ```
 
 **Resultado:**
+
 - React Router agora sabe que está em subdiretório
 - Todas as rotas funcionam corretamente
 - Navegação interna funciona
@@ -166,11 +178,13 @@ rvcar-installer.zip      → Regenerado
 Se precisar mudar o subdiretório (ex: `/site/` ao invés de `/rvcar/`):
 
 1. **Altere em 3 lugares:**
+
    - `vite.config.ts` → `base: '/site/'`
    - `src/App.tsx` → `basename = '/site'`
    - `src/lib/vehicleManager.ts` → API path
 
 2. **Rebuild:**
+
    ```bash
    npm run build
    ```

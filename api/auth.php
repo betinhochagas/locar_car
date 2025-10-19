@@ -9,20 +9,45 @@
 // ============================================================================
 // CORS CONFIGURATION
 // ============================================================================
-$allowed_origins = [
-    'http://localhost:8080',
-    'http://localhost:5173',
-    'http://127.0.0.1:8080',
-    'http://127.0.0.1:5173',
-];
 
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+// Detectar se está em produção ou desenvolvimento
+$is_production = !in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1']);
 
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: " . $origin);
-    header('Access-Control-Allow-Credentials: true');
+if ($is_production) {
+    // PRODUÇÃO: Permitir apenas o próprio domínio
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $domain = $_SERVER['SERVER_NAME'];
+
+    $allowed_origins = [
+        $protocol . '://' . $domain,
+        'https://' . $domain,
+        'http://' . $domain,
+    ];
+
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+    if (in_array($origin, $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $origin);
+    } else {
+        header("Access-Control-Allow-Origin: " . $protocol . '://' . $domain);
+    }
 } else {
-    header("Access-Control-Allow-Origin: *");
+    // DESENVOLVIMENTO: Permitir origens de teste
+    $allowed_origins = [
+        'http://localhost:8080',
+        'http://localhost:5173',
+        'http://127.0.0.1:8080',
+        'http://127.0.0.1:5173',
+    ];
+
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+    if (in_array($origin, $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $origin);
+        header('Access-Control-Allow-Credentials: true');
+    } else {
+        header("Access-Control-Allow-Origin: *");
+    }
 }
 
 header('Access-Control-Allow-Methods: POST, OPTIONS');
