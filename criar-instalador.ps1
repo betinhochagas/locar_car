@@ -62,10 +62,14 @@ Write-Host "[=>] Copiando API (api/)..." -ForegroundColor Yellow
 $tempApiFolder = Join-Path $tempFolder "api"
 New-Item -ItemType Directory -Path $tempApiFolder | Out-Null
 
-# Copiar apenas vehicles.php e .htaccess
-Copy-Item -Path (Join-Path $apiFolder "vehicles.php") -Destination $tempApiFolder
-if (Test-Path (Join-Path $apiFolder ".htaccess")) {
-    Copy-Item -Path (Join-Path $apiFolder ".htaccess") -Destination $tempApiFolder
+# Copiar todos os arquivos PHP necessários
+$apiFiles = @("vehicles.php", "auth.php", "upload.php", ".htaccess")
+foreach ($file in $apiFiles) {
+    $sourcePath = Join-Path $apiFolder $file
+    if (Test-Path $sourcePath) {
+        Copy-Item -Path $sourcePath -Destination $tempApiFolder
+        Write-Host "  [OK] $file copiado" -ForegroundColor Gray
+    }
 }
 Write-Host "[OK] API copiada (sem config.php)" -ForegroundColor Green
 
