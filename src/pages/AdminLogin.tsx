@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Lock, User } from 'lucide-react';
-import { DEFAULT_ADMIN } from '@/types/admin';
 import { toast } from 'sonner';
+import { login } from '@/lib/authManager';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
@@ -14,21 +14,19 @@ const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // Simple authentication (in production, use proper backend authentication)
-    setTimeout(() => {
-      if (username === DEFAULT_ADMIN.username && password === DEFAULT_ADMIN.password) {
-        localStorage.setItem('rvcar_admin_auth', 'true');
-        toast.success('Login realizado com sucesso!');
-        navigate('/admin/dashboard');
-      } else {
-        toast.error('Usuário ou senha incorretos!');
-      }
+    try {
+      await login(username, password);
+      toast.success('Login realizado com sucesso!');
+      navigate('/admin/dashboard');
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao fazer login');
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   return (

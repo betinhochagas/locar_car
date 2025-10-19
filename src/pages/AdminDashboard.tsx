@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Plus, Edit, Trash2, LogOut, Car, Home } from 'lucide-react';
+import { Plus, Edit, Trash2, LogOut, Car, Home, Upload, X } from 'lucide-react';
 import { Vehicle } from '@/types/admin';
 import {
   getVehicles,
@@ -33,14 +33,19 @@ import {
   deleteVehicle,
   toggleVehicleAvailability,
 } from '@/lib/vehicleManager';
+import { isAuthenticated, logout, getUser } from '@/lib/authManager';
+import { uploadImage, createImagePreview, validateImage } from '@/lib/uploadManager';
 import { toast } from 'sonner';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -51,8 +56,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Check authentication
-    const isAuth = localStorage.getItem('rvcar_admin_auth');
-    if (!isAuth) {
+    if (!isAuthenticated()) {
       navigate('/admin/login');
       return;
     }
@@ -61,12 +65,17 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   const loadVehicles = async () => {
-    const loadedVehicles = await getVehicles();
-    setVehicles(loadedVehicles);
+    try {
+      const loadedVehicles = await getVehicles();
+      setVehicles(loadedVehicles);
+    } catch (error) {
+      console.error('Erro ao carregar veículos:', error);
+      toast.error('Erro ao carregar veículos');
+    }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('rvcar_admin_auth');
+    logout();
     toast.success('Logout realizado com sucesso!');
     navigate('/admin/login');
   };
@@ -80,6 +89,7 @@ const AdminDashboard = () => {
       features: '',
       available: true,
     });
+    setImagePreview(null);
     setIsEditDialogOpen(true);
   };
 
@@ -92,7 +102,45 @@ const AdminDashboard = () => {
       features: vehicle.features.join(', '),
       available: vehicle.available,
     });
+    setImagePreview(vehicle.image);
     setIsEditDialogOpen(true);
+  };
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar imagem
+    const validation = validateImage(file);
+    if (!validation.valid) {
+      toast.error(validation.error);
+      return;
+    }
+
+    // Criar preview
+    try {
+      const preview = await createImagePreview(file);
+      setImagePreview(preview);
+
+      // Fazer upload
+      setUploadingImage(true);
+      const imageUrl = await uploadImage(file);
+      setFormData({ ...formData, image: imageUrl });
+      toast.success('Imagem enviada com sucesso!');
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao enviar imagem');
+      setImagePreview(null);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setFormData({ ...formData, image: '' });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSaveVehicle = async () => {
@@ -342,15 +390,68 @@ const AdminDashboard = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image">URL da Imagem</Label>
-              <Input
-                id="image"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                placeholder="Cole a URL da imagem do veículo"
-              />
+              <Label htmlFor="image">Imagem do Veículo</Label>
+              
+              {/* Preview da imagem */}
+              {imagePreview && (
+                <div className="relative w-full h-48 mb-2 border rounded-md overflow-hidden">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={handleRemoveImage}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              
+              {/* Botão de upload */}
+              <div className="flex gap-2">
+                <Input
+                  ref={fileInputRef}
+                  id="image-file"
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  className="flex-1"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploadingImage ? 'Enviando...' : 'Enviar Imagem'}
+                </Button>
+              </div>
+              
+              {/* Campo URL manual (opcional) */}
+              <div className="relative">
+                <Label htmlFor="image-url" className="text-xs text-muted-foreground">
+                  Ou cole URL da imagem:
+                </Label>
+                <Input
+                  id="image-url"
+                  value={formData.image}
+                  onChange={(e) => {
+                    setFormData({ ...formData, image: e.target.value });
+                    setImagePreview(e.target.value);
+                  }}
+                  placeholder="https://exemplo.com/imagem.jpg"
+                />
+              </div>
+              
               <p className="text-xs text-muted-foreground">
-                Deixe em branco para usar imagem padrão
+                Formatos aceitos: JPG, PNG, WebP (máx. 5MB)
               </p>
             </div>
 

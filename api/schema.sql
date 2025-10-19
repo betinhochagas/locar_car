@@ -59,6 +59,43 @@ INSERT INTO vehicles (id, name, price, image, features, available, created_at, u
  JSON_ARRAY('Sedan premium', 'Espaço superior', 'Tecnologia avançada', 'Conforto total'),
  TRUE, NOW(), NOW());
 
+-- Criar tabela de administradores
+DROP TABLE IF EXISTS admins;
+
+CREATE TABLE admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_username (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Criar tabela de tokens de autenticação
+DROP TABLE IF EXISTS admin_tokens;
+
+CREATE TABLE admin_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id INT NOT NULL,
+    token VARCHAR(64) UNIQUE NOT NULL,
+    expires_at DATETIME NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE CASCADE,
+    INDEX idx_token (token),
+    INDEX idx_expires (expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Inserir administrador padrão
+-- Usuário: admin
+-- Senha: rvcar2024
+INSERT INTO admins (username, password, name) VALUES
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrador');
+
 -- Verificar dados inseridos
 SELECT COUNT(*) as total_veiculos FROM vehicles;
+SELECT COUNT(*) as total_admins FROM admins;
 SELECT * FROM vehicles;
+SELECT id, username, name, created_at FROM admins;
