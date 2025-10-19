@@ -33,6 +33,7 @@ cd D:\website\rv-car-solutions-main
 ```
 
 **O que acontece:**
+
 - ✅ Verifica se existe build (dist/)
 - ✅ Cria pasta temporária
 - ✅ Copia frontend compilado
@@ -44,6 +45,7 @@ cd D:\website\rv-car-solutions-main
 - ✅ Abre pasta com o arquivo
 
 **Resultado:**
+
 ```
 ✅ Arquivo criado: rvcar-installer.zip (~2-3 MB)
 ```
@@ -55,6 +57,7 @@ cd D:\website\rv-car-solutions-main
 **No cPanel:**
 
 1. **Login:**
+
    ```
    URL: https://srv41.hinetworks.com.br:2083
    Usuário: [seu_usuario]
@@ -62,15 +65,18 @@ cd D:\website\rv-car-solutions-main
    ```
 
 2. **File Manager:**
+
    - Clique em "File Manager"
    - Navegue até `public_html/`
 
 3. **Upload do ZIP:**
+
    - Clique em "Upload"
    - Selecione `rvcar-installer.zip`
    - Aguarde conclusão (100%)
 
 4. **Extrair Arquivos:**
+
    - Volte ao File Manager
    - Clique com botão direito em `rvcar-installer.zip`
    - Selecione "Extract"
@@ -97,19 +103,22 @@ cd D:\website\rv-car-solutions-main
 1. **No cPanel → MySQL® Databases**
 
 2. **Criar Novo Banco:**
+
    ```
    Nome: usuario_rvcar_db
-   
+
    (Substitua "usuario" pelo prefixo do seu cPanel)
    ```
 
 3. **Criar Novo Usuário:**
+
    ```
    Nome: usuario_rvcar_user
    Senha: [senha_forte_aqui]
    ```
 
 4. **Adicionar Usuário ao Banco:**
+
    - Selecione o usuário criado
    - Selecione o banco criado
    - Marque "ALL PRIVILEGES"
@@ -130,6 +139,7 @@ cd D:\website\rv-car-solutions-main
 **No navegador:**
 
 1. **Acesse:**
+
    ```
    https://seudominio.com.br/install/
    ```
@@ -154,10 +164,12 @@ cd D:\website\rv-car-solutions-main
 ```
 
 **Se tudo OK:**
+
 - Botão "Continuar" fica habilitado
 - Clique para prosseguir
 
 **Se houver erro:**
+
 - Mensagem clara do problema
 - Contate seu provedor de hospedagem
 
@@ -183,27 +195,32 @@ Senha do Banco:       [sua_senha]
 ### **⚙️ ETAPA 3 DO INSTALADOR: Instalação**
 
 **Revisão das Configurações:**
+
 - Mostra os dados que você preencheu
 - Lista o que será instalado
 
 **O que acontece ao clicar "🚀 Instalar Agora":**
 
 1. **Conexão ao MySQL**
+
    ```
    ✓ Conectando ao servidor...
    ```
 
 2. **Criação do Banco**
+
    ```
    ✓ Criando banco de dados...
    ```
 
 3. **Criação da Tabela**
+
    ```
    ✓ Criando tabela vehicles...
    ```
 
 4. **Inserção de Dados**
+
    ```
    ✓ Inserindo 8 veículos padrão...
    - Fiat Mobi (R$ 650)
@@ -217,6 +234,7 @@ Senha do Banco:       [sua_senha]
    ```
 
 5. **Geração de Configuração**
+
    ```
    ✓ Criando arquivo api/config.php...
    ✓ Configurando detecção de ambiente...
@@ -258,6 +276,7 @@ Senha do Banco:       [sua_senha]
 ```
 
 **Botões disponíveis:**
+
 - 🏠 **Ir para o Site** - Ver site funcionando
 - 🔧 **Testar API** - Ver JSON dos veículos
 
@@ -274,6 +293,7 @@ Senha do Banco:       [sua_senha]
 5. **Confirme**
 
 **Por quê?**
+
 ```
 ⚠️ Manter o instalador acessível é um RISCO DE SEGURANÇA!
    Qualquer pessoa poderia reinstalar e destruir seus dados!
@@ -362,6 +382,7 @@ JavaScript
 ```
 
 **Cada erro mostra:**
+
 - ❌ Mensagem clara do problema
 - 💡 Sugestão de solução
 - 🔙 Botão para voltar e corrigir
@@ -565,10 +586,12 @@ Após executar o instalador, você terá:
 ## 📞 Suporte
 
 **Dúvidas sobre o instalador?**
+
 - Veja: `install/GUIA-INSTALADOR.md`
 - GitHub: https://github.com/betinhochagas/rvcar
 
 **Contato:**
+
 - 📱 WhatsApp: (47) 98448-5492
 - 📧 Email: contato@rvcarlocacoes.com.br
 
