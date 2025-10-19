@@ -238,14 +238,14 @@ function performInstallation()
         if ($row['count'] == 0) {
             // Inserir veículos padrão com novo formato
             $vehicles = [
-                ['veh_1', 'Fiat Mobi', 'R$650', '/rvcar/assets/mobi.jpg', '["Econômico","Ar Condicionado","Direção Hidráulica","Perfeito para cidade"]'],
-                ['veh_2', 'Renault Kwid', 'R$650', '/rvcar/assets/kwid.jpg', '["Compacto","Baixo consumo","Moderna tecnologia","Fácil manuseio"]'],
-                ['veh_3', 'Fiat Uno', 'R$650', '/rvcar/assets/uno.jpg', '["Confiável","Peças acessíveis","Ótimo custo-benefício","Espaçoso"]'],
-                ['veh_4', 'Chevrolet Onix', 'R$700', '/rvcar/assets/onix.jpg', '["Modelo popular","Conforto superior","Tecnologia moderna","Bom desempenho"]'],
-                ['veh_5', 'VW Gol', 'R$700', '/rvcar/assets/gol.jpg', '["Líder de vendas","Confiabilidade","Manutenção fácil","Design moderno"]'],
-                ['veh_6', 'VW Voyage', 'R$700', '/rvcar/assets/voyage.jpg', '["Sedan espaçoso","Porta-malas amplo","Conforto extra","Elegante"]'],
-                ['veh_7', 'Renault Sandero', 'R$700', '/rvcar/assets/sandero.jpg', '["Versátil","Espaço interno","Design arrojado","Bom desempenho"]'],
-                ['veh_8', 'Nissan Versa', 'R$700', '/rvcar/assets/versa.jpg', '["Sedan premium","Espaço superior","Tecnologia avançada","Conforto total"]']
+                ['veh_674e9f1a2b5c8', 'Fiat Mobi', 'R$650', '/placeholder.svg', '["Econômico","Ar Condicionado","Direção Hidráulica","Perfeito para cidade"]'],
+                ['veh_674e9f1a2b5c9', 'Renault Kwid', 'R$650', '/placeholder.svg', '["Compacto","Baixo consumo","Moderna tecnologia","Fácil manuseio"]'],
+                ['veh_674e9f1a2b5ca', 'Fiat Uno', 'R$650', '/placeholder.svg', '["Confiável","Peças acessíveis","Ótimo custo-benefício","Espaçoso"]'],
+                ['veh_674e9f1a2b5cb', 'Chevrolet Onix', 'R$700', '/placeholder.svg', '["Modelo popular","Conforto superior","Tecnologia moderna","Bom desempenho"]'],
+                ['veh_674e9f1a2b5cc', 'VW Gol', 'R$700', '/placeholder.svg', '["Líder de vendas","Confiabilidade","Manutenção fácil","Design moderno"]'],
+                ['veh_674e9f1a2b5cd', 'VW Voyage', 'R$700', '/placeholder.svg', '["Sedan espaçoso","Porta-malas amplo","Conforto extra","Elegante"]'],
+                ['veh_674e9f1a2b5ce', 'Renault Sandero', 'R$700', '/placeholder.svg', '["Versátil","Espaço interno","Design arrojado","Bom desempenho"]'],
+                ['veh_674e9f1a2b5cf', 'Nissan Versa', 'R$700', '/placeholder.svg', '["Sedan premium","Espaço superior","Tecnologia avançada","Conforto total"]']
             ];
 
             $stmt = $conn->prepare("INSERT INTO vehicles (id, name, price, image, features, available, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())");

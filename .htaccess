@@ -3,6 +3,9 @@
 # Habilitar RewriteEngine
 RewriteEngine On
 
+# Base path para subdiretório /rvcar/
+RewriteBase /rvcar/
+
 # Forçar HTTPS (Segurança)
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
@@ -18,8 +21,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # Exceto arquivos reais e a pasta API
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/api/
-RewriteRule ^(.*)$ /index.html [L,QSA]
+RewriteCond %{REQUEST_URI} !^/rvcar/api/
+RewriteCond %{REQUEST_URI} !^/rvcar/install/
+RewriteCond %{REQUEST_URI} !^/rvcar/uploads/
+RewriteRule ^(.*)$ /rvcar/index.html [L,QSA]
 
 # Cache para Assets Estáticos (Performance)
 <FilesMatch "\.(jpg|jpeg|png|gif|svg|webp|ico|woff|woff2|ttf|eot)$">
