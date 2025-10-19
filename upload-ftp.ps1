@@ -108,7 +108,8 @@ try {
     Write-Host "Teste o site: https://bnutech.com.br/rvcar/" -ForegroundColor Cyan
     Write-Host ""
     
-} catch {
+}
+catch {
     Write-Host ""
     Write-Host "[ERRO] Falha no upload: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host ""

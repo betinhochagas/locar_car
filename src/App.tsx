@@ -10,8 +10,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
-// No basename needed for Vercel/Netlify
-const basename = '';
+// Base path for subdirectory deployment
+const basename = '/rvcar';
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
