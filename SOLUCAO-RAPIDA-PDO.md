@@ -11,6 +11,7 @@
 ## ⚡ SOLUÇÃO EM 3 PASSOS (2 minutos)
 
 ### PASSO 1: Acesse o cPanel
+
 ```
 URL: https://srv41.hinetworks.com.br:2083
 Usuário: seu_usuario
@@ -18,6 +19,7 @@ Senha: sua_senha
 ```
 
 ### PASSO 2: Edite o arquivo
+
 1. Vá em **File Manager**
 2. Navegue: `public_html/api/`
 3. Encontre: `config.php`
@@ -82,7 +84,8 @@ function sendError($message, $statusCode = 400)
 ?>
 ```
 
-**IMPORTANTE:** 
+**IMPORTANTE:**
+
 - ✅ Senha já está correta: `R.chagas1988`
 - ✅ Nome do banco: `bnutechc_rvcar`
 - ✅ Usuário: `bnutechc_rvcar`
@@ -94,12 +97,15 @@ function sendError($message, $statusCode = 400)
 ## ✅ TESTE SE FUNCIONOU
 
 ### Teste 1: API
+
 Abra no navegador:
+
 ```
 https://bnutech.com.br/api/vehicles.php
 ```
 
 **Deve mostrar:**
+
 ```json
 [
   {
@@ -113,12 +119,15 @@ https://bnutech.com.br/api/vehicles.php
 ```
 
 ### Teste 2: Site
+
 Abra:
+
 ```
 https://bnutech.com.br
 ```
 
 **Deve carregar:**
+
 - ✅ Página inicial
 - ✅ Seção "Nossos Veículos"
 - ✅ 8 veículos aparecem
@@ -129,12 +138,14 @@ https://bnutech.com.br
 ## 🔥 SE AINDA NÃO FUNCIONAR
 
 ### Opção A: Limpar Cache
+
 ```
 Ctrl + Shift + R (Windows)
 Cmd + Shift + R (Mac)
 ```
 
 ### Opção B: Verificar Console
+
 1. Pressione **F12**
 2. Vá em **Console**
 3. Recarregue a página
@@ -142,6 +153,7 @@ Cmd + Shift + R (Mac)
 5. **Me envie o erro** se houver
 
 ### Opção C: Testar Credenciais
+
 1. Acesse cPanel → **phpMyAdmin**
 2. Tente logar com:
    - Usuário: `bnutechc_rvcar`
@@ -153,13 +165,13 @@ Cmd + Shift + R (Mac)
 
 ## 📊 ANTES vs DEPOIS
 
-| ANTES (MySQLi - ERRADO) | DEPOIS (PDO - CORRETO) |
-|-------------------------|------------------------|
+| ANTES (MySQLi - ERRADO)    | DEPOIS (PDO - CORRETO)       |
+| -------------------------- | ---------------------------- |
 | `function getConnection()` | `function getDBConnection()` |
-| `new mysqli(...)` | `new PDO(...)` |
-| Não tem sendResponse() | Tem sendResponse() ✅ |
-| Não tem sendError() | Tem sendError() ✅ |
-| API retorna erro ❌ | API funciona ✅ |
+| `new mysqli(...)`          | `new PDO(...)`               |
+| Não tem sendResponse()     | Tem sendResponse() ✅        |
+| Não tem sendError()        | Tem sendError() ✅           |
+| API retorna erro ❌        | API funciona ✅              |
 
 ---
 
@@ -182,12 +194,15 @@ Após editar o config.php:
 Se precisar do código completo novamente:
 
 **Local:**
+
 - `d:\website\rv-car-solutions-main\api\config-producao.php`
 
 **GitHub:**
+
 - `https://github.com/betinhochagas/rvcar/blob/master/api/config-producao.php`
 
 **Documentação:**
+
 - `CORRECAO-CONFIG-PDO.md` (guia técnico completo)
 
 ---
@@ -197,11 +212,13 @@ Se precisar do código completo novamente:
 ### Após corrigir, IMEDIATAMENTE:
 
 1. **Delete a pasta `/install/`**
+
    ```
    cPanel → File Manager → public_html/install/ → Delete
    ```
 
 2. **Troque a senha do admin**
+
    ```
    Acesse: https://bnutech.com.br/admin
    Login: admin
@@ -222,12 +239,14 @@ Se precisar do código completo novamente:
 O instalador estava gerando `config.php` com **MySQLi** (extensão antiga), mas o código da API usa **PDO** (extensão moderna).
 
 **Já corrigi:**
+
 - ✅ Instalador atualizado para gerar PDO
 - ✅ Novo ZIP gerado com correção
 - ✅ Commit enviado para GitHub
 - ✅ Próximas instalações vão funcionar
 
 **Para esta instalação:**
+
 - ⚠️ Precisa editar manualmente (só desta vez)
 - ⏱️ Leva 2 minutos
 - ✅ Depois nunca mais precisa
@@ -238,7 +257,7 @@ O instalador estava gerando `config.php` com **MySQLi** (extensão antiga), mas 
 
 ✅ **Funcionar:** "Funcionou! Site carregando!"  
 ❌ **Erro persistir:** Me envie o erro do Console (F12)  
-🔐 **Dúvida na senha:** Vamos verificar juntos  
+🔐 **Dúvida na senha:** Vamos verificar juntos
 
 ---
 
