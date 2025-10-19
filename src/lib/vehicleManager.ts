@@ -9,7 +9,7 @@ const getApiUrl = (): string => {
   
   // Em produção, usa URL relativa (mesmo domínio)
   if (import.meta.env.PROD) {
-    return '/api/vehicles.php';
+    return '/rvcar/api/vehicles.php';
   }
   
   // Em desenvolvimento, tenta usar o host atual com porta 3000
