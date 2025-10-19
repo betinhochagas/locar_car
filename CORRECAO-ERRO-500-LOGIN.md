@@ -9,6 +9,7 @@
 ### O que aconteceu:
 
 O instalador cria o arquivo `config.php` com estas funções:
+
 ```php
 function sendResponse($data, $statusCode = 200)
 function sendError($message, $statusCode = 400)
@@ -17,6 +18,7 @@ function sendError($message, $statusCode = 400)
 Os arquivos `auth.php` e `upload.php` **também** definiam essas mesmas funções.
 
 Quando o PHP carregava:
+
 1. `config.php` define `sendResponse()` e `sendError()`
 2. `auth.php` tenta definir novamente → **ERRO FATAL 500**
 
@@ -25,6 +27,7 @@ Quando o PHP carregava:
 ## ✅ SOLUÇÃO APLICADA
 
 Removi as funções duplicadas de:
+
 - ✅ `api/auth.php` (removido linhas 68-76)
 - ✅ `api/upload.php` (removido linhas 80-88)
 
@@ -35,6 +38,7 @@ Agora ambos os arquivos usam as funções do `config.php`.
 ## 📦 ARQUIVOS CORRIGIDOS
 
 ### ANTES (com erro):
+
 ```php
 // auth.php
 require_once 'config.php';
@@ -51,6 +55,7 @@ function sendError($message, $code = 400)  // ← DUPLICADO!
 ```
 
 ### DEPOIS (corrigido):
+
 ```php
 // auth.php
 require_once 'config.php';
@@ -65,10 +70,12 @@ require_once 'config.php';
 ### Opção 1: Substituir apenas os arquivos corrigidos (RÁPIDO)
 
 1. **Download** dos arquivos corrigidos do GitHub:
+
    - https://github.com/betinhochagas/rvcar/blob/master/api/auth.php
    - https://github.com/betinhochagas/rvcar/blob/master/api/upload.php
 
 2. **Upload** no cPanel para `/rvcar/api/`
+
    - Sobrescrever os arquivos existentes
 
 3. **Teste** o login novamente
@@ -80,12 +87,14 @@ require_once 'config.php';
 1. **DELETE** a pasta `deploy-rvcar` antiga no seu PC
 
 2. **Execute** os comandos no PowerShell:
+
 ```powershell
 cd D:\website\rv-car-solutions-main
 Remove-Item -Path "deploy-rvcar" -Recurse -Force
 ```
 
 3. **Recrie** a pasta com os arquivos corrigidos:
+
 ```powershell
 # Criar estrutura
 New-Item -ItemType Directory -Path "deploy-rvcar" -Force
@@ -127,6 +136,7 @@ New-Item -ItemType Directory -Path "deploy-rvcar\uploads\vehicles" -Force
 ## 🔍 VERIFICAÇÃO
 
 Após aplicar a correção, o login deve:
+
 - ✅ Não retornar erro 500
 - ✅ Aceitar credenciais `admin` / `rvcar2024`
 - ✅ Retornar token de autenticação
@@ -137,6 +147,7 @@ Após aplicar a correção, o login deve:
 ## 📝 LOGS DE ERRO
 
 Se ainda tiver problemas, verifique os logs:
+
 1. cPanel → **Error Log**
 2. Procure por: "Cannot redeclare function"
 3. Se ainda aparecer, significa que os arquivos não foram atualizados
