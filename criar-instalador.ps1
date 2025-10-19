@@ -16,7 +16,7 @@ $tempFolder = Join-Path $projectRoot "temp-installer"
 
 # Verificar se o build existe
 if (-not (Test-Path $distFolder)) {
-    Write-Host "❌ Erro: Pasta dist/ não encontrada!" -ForegroundColor Red
+    Write-Host "[ERRO] Pasta dist/ nao encontrada!" -ForegroundColor Red
     Write-Host ""
     Write-Host "Execute primeiro:" -ForegroundColor Yellow
     Write-Host "  npm run build" -ForegroundColor White
@@ -27,12 +27,12 @@ if (-not (Test-Path $distFolder)) {
 
 # Verificar se o instalador existe
 if (-not (Test-Path (Join-Path $installFolder "index.php"))) {
-    Write-Host "❌ Erro: Instalador não encontrado em install/index.php" -ForegroundColor Red
+    Write-Host "[ERRO] Instalador nao encontrado em install/index.php" -ForegroundColor Red
     pause
     exit 1
 }
 
-Write-Host "📦 Preparando arquivos..." -ForegroundColor Yellow
+Write-Host "[=>] Preparando arquivos..." -ForegroundColor Yellow
 
 # Remover temp e zip antigos se existirem
 if (Test-Path $tempFolder) {
@@ -45,20 +45,20 @@ if (Test-Path $outputZip) {
 # Criar pasta temporária
 New-Item -ItemType Directory -Path $tempFolder | Out-Null
 
-Write-Host "✓ Pasta temporária criada" -ForegroundColor Green
+Write-Host "[OK] Pasta temporaria criada" -ForegroundColor Green
 
 # Copiar arquivos do dist (frontend compilado)
-Write-Host "📁 Copiando frontend (dist/)..." -ForegroundColor Yellow
+Write-Host "[=>] Copiando frontend (dist/)..." -ForegroundColor Yellow
 Copy-Item -Path "$distFolder\*" -Destination $tempFolder -Recurse
-Write-Host "✓ Frontend copiado" -ForegroundColor Green
+Write-Host "[OK] Frontend copiado" -ForegroundColor Green
 
 # Copiar pasta install
-Write-Host "📁 Copiando instalador (install/)..." -ForegroundColor Yellow
+Write-Host "[=>] Copiando instalador (install/)..." -ForegroundColor Yellow
 Copy-Item -Path $installFolder -Destination $tempFolder -Recurse
-Write-Host "✓ Instalador copiado" -ForegroundColor Green
+Write-Host "[OK] Instalador copiado" -ForegroundColor Green
 
 # Copiar pasta api (sem config.php pois será gerado pelo instalador)
-Write-Host "📁 Copiando API (api/)..." -ForegroundColor Yellow
+Write-Host "[=>] Copiando API (api/)..." -ForegroundColor Yellow
 $tempApiFolder = Join-Path $tempFolder "api"
 New-Item -ItemType Directory -Path $tempApiFolder | Out-Null
 
@@ -67,12 +67,12 @@ Copy-Item -Path (Join-Path $apiFolder "vehicles.php") -Destination $tempApiFolde
 if (Test-Path (Join-Path $apiFolder ".htaccess")) {
     Copy-Item -Path (Join-Path $apiFolder ".htaccess") -Destination $tempApiFolder
 }
-Write-Host "✓ API copiada (sem config.php)" -ForegroundColor Green
+Write-Host "[OK] API copiada (sem config.php)" -ForegroundColor Green
 
 # Criar .htaccess raiz se não existir no dist
 $htaccessRaiz = Join-Path $tempFolder ".htaccess"
 if (-not (Test-Path $htaccessRaiz)) {
-    Write-Host "📝 Criando .htaccess raiz..." -ForegroundColor Yellow
+    Write-Host "[=>] Criando .htaccess raiz..." -ForegroundColor Yellow
     $htaccessContent = @"
 # RV Car Solutions - Apache Configuration
 # Gerado automaticamente
@@ -135,12 +135,12 @@ if (-not (Test-Path $htaccessRaiz)) {
 </FilesMatch>
 "@
     Set-Content -Path $htaccessRaiz -Value $htaccessContent
-    Write-Host "✓ .htaccess criado" -ForegroundColor Green
+    Write-Host "OK .htaccess criado" -ForegroundColor Green
 }
 
 # Criar arquivo README.txt com instruções rápidas
-Write-Host "📝 Criando README.txt..." -ForegroundColor Yellow
-$readmeContent = @"
+Write-Host "Criando README.txt..." -ForegroundColor Yellow
+$readmeContent = @'
 ========================================
   RV Car Solutions - Instalador v2.0.0
 ========================================
@@ -188,38 +188,40 @@ GitHub: https://github.com/betinhochagas/rvcar
 
 Desenvolvido com amor para RV Car Solutions
 Blumenau - Santa Catarina
-"@
+'@
 Set-Content -Path (Join-Path $tempFolder "README.txt") -Value $readmeContent
-Write-Host "✓ README.txt criado" -ForegroundColor Green
+Write-Host "[OK] README.txt criado" -ForegroundColor Green
 
 # Criar arquivo de versão
-$versionContent = @"
+$versionContent = @'
 RV Car Solutions
 Versao: 2.0.0
-Build: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+Build: {0}
 Instalador: Web Installer
-"@
+'@ -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+
 Set-Content -Path (Join-Path $tempFolder "VERSION.txt") -Value $versionContent
-Write-Host "✓ VERSION.txt criado" -ForegroundColor Green
+Write-Host "[OK] VERSION.txt criado" -ForegroundColor Green
 
 # Criar o ZIP
 Write-Host ""
-Write-Host "📦 Criando arquivo ZIP..." -ForegroundColor Yellow
-Write-Host "   Isso pode levar alguns segundos..." -ForegroundColor Gray
+Write-Host "[=>] Criando arquivo ZIP..." -ForegroundColor Yellow
+Write-Host "    Isso pode levar alguns segundos..." -ForegroundColor Gray
 
 try {
     Compress-Archive -Path "$tempFolder\*" -DestinationPath $outputZip -CompressionLevel Optimal
-    Write-Host "✓ ZIP criado com sucesso!" -ForegroundColor Green
-} catch {
-    Write-Host "❌ Erro ao criar ZIP: $_" -ForegroundColor Red
+    Write-Host "[OK] ZIP criado com sucesso!" -ForegroundColor Green
+}
+catch {
+    Write-Host "[ERRO] Erro ao criar ZIP: $_" -ForegroundColor Red
     pause
     exit 1
 }
 
 # Limpar pasta temporária
-Write-Host "🧹 Limpando arquivos temporários..." -ForegroundColor Yellow
+Write-Host "[=>] Limpando arquivos temporarios..." -ForegroundColor Yellow
 Remove-Item $tempFolder -Recurse -Force
-Write-Host "✓ Limpeza concluída" -ForegroundColor Green
+Write-Host "[OK] Limpeza concluida" -ForegroundColor Green
 
 # Informações do arquivo
 $zipInfo = Get-Item $outputZip
@@ -227,23 +229,23 @@ $zipSizeMB = [math]::Round($zipInfo.Length / 1MB, 2)
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Green
-Write-Host "  ✅ INSTALADOR GERADO COM SUCESSO!" -ForegroundColor Green
+Write-Host "  [SUCESSO] INSTALADOR GERADO COM SUCESSO!" -ForegroundColor Green
 Write-Host "================================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "📦 Arquivo:" -ForegroundColor Cyan
+Write-Host "Arquivo:" -ForegroundColor Cyan
 Write-Host "   $outputZip" -ForegroundColor White
 Write-Host ""
-Write-Host "📊 Tamanho:" -ForegroundColor Cyan
+Write-Host "Tamanho:" -ForegroundColor Cyan
 Write-Host "   $zipSizeMB MB" -ForegroundColor White
 Write-Host ""
-Write-Host "📋 Conteúdo:" -ForegroundColor Cyan
-Write-Host "   ✓ Frontend compilado (dist/)" -ForegroundColor White
-Write-Host "   ✓ Backend API (api/)" -ForegroundColor White
-Write-Host "   ✓ Instalador Web (install/)" -ForegroundColor White
-Write-Host "   ✓ Configuração Apache (.htaccess)" -ForegroundColor White
-Write-Host "   ✓ Documentação (README.txt)" -ForegroundColor White
+Write-Host "Conteudo:" -ForegroundColor Cyan
+Write-Host "   [OK] Frontend compilado (dist/)" -ForegroundColor White
+Write-Host "   [OK] Backend API (api/)" -ForegroundColor White
+Write-Host "   [OK] Instalador Web (install/)" -ForegroundColor White
+Write-Host "   [OK] Configuracao Apache (.htaccess)" -ForegroundColor White
+Write-Host "   [OK] Documentacao (README.txt)" -ForegroundColor White
 Write-Host ""
-Write-Host "🚀 PRÓXIMOS PASSOS:" -ForegroundColor Yellow
+Write-Host "PROXIMOS PASSOS:" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "1. Acesse seu cPanel" -ForegroundColor White
 Write-Host "   https://srv41.hinetworks.com.br:2083" -ForegroundColor Gray
@@ -260,10 +262,10 @@ Write-Host "   https://seudominio.com.br/install/" -ForegroundColor Gray
 Write-Host ""
 Write-Host "6. Siga os 4 passos do instalador" -ForegroundColor White
 Write-Host ""
-Write-Host "7. DELETE a pasta /install/ após concluir!" -ForegroundColor Red
+Write-Host "7. DELETE a pasta /install/ apos concluir!" -ForegroundColor Red
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  📚 Documentação completa:" -ForegroundColor Cyan
+Write-Host "  Documentacao completa:" -ForegroundColor Cyan
 Write-Host "  install/GUIA-INSTALADOR.md" -ForegroundColor White
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
@@ -274,5 +276,5 @@ pause
 Invoke-Item $projectRoot
 
 Write-Host ""
-Write-Host "✨ Pronto para deploy! Boa sorte! 🚀" -ForegroundColor Green
+Write-Host "[SUCESSO] Pronto para deploy! Boa sorte!" -ForegroundColor Green
 Write-Host ""
