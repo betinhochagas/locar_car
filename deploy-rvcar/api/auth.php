@@ -63,21 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once 'config.php';
 
 // ============================================================================
-// FUNÇÕES AUXILIARES
-// ============================================================================
-function sendResponse($data, $code = 200)
-{
-    http_response_code($code);
-    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
-}
-
-function sendError($message, $code = 400)
-{
-    sendResponse(['error' => $message], $code);
-}
-
-// ============================================================================
 // PROCESSAR REQUISIÇÃO
 // ============================================================================
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

@@ -9,6 +9,7 @@ Devido a problemas com o script PowerShell `criar-instalador.ps1`, foi criada a 
 ## 🎯 O QUE É?
 
 Uma pasta com a estrutura **COMPLETA** do sistema:
+
 - ✅ Frontend compilado (React + Vite)
 - ✅ Backend APIs (PHP)
 - ✅ Instalador Web
@@ -62,6 +63,7 @@ Clique direito em `deploy-rvcar` → **Enviar para** → **Pasta compactada**
 ### 2️⃣ Upload
 
 **cPanel:** https://srv41.hinetworks.com.br:2083
+
 - File Manager → `public_html/rvcar/`
 - Upload do ZIP
 - Extract
@@ -71,6 +73,7 @@ Clique direito em `deploy-rvcar` → **Enviar para** → **Pasta compactada**
 **URL:** https://bnutech.com.br/rvcar/install/
 
 **Banco:**
+
 - Host: `localhost`
 - Database: `bnutechc_rvcar`
 - User: `bnutechc_rvcar`
@@ -91,12 +94,14 @@ Clique direito em `deploy-rvcar` → **Enviar para** → **Pasta compactada**
 ## ✅ VANTAGENS DESTA ABORDAGEM
 
 ### Antes (script PowerShell):
+
 - ❌ Erros de encoding
 - ❌ Arquivos faltando
 - ❌ Comandos complexos
 - ❌ Difícil debugar
 
 ### Agora (pasta pronta):
+
 - ✅ 100% confiável
 - ✅ Todos os arquivos incluídos
 - ✅ Você mesmo cria o ZIP
@@ -107,12 +112,14 @@ Clique direito em `deploy-rvcar` → **Enviar para** → **Pasta compactada**
 ## 📋 ARQUIVOS INCLUÍDOS
 
 ### Frontend (dist):
+
 - ✅ `index.html`
 - ✅ `assets/*.js` (React compilado)
 - ✅ `assets/*.css` (Tailwind compilado)
 - ✅ `assets/*.jpg` (imagens)
 
 ### Backend (api):
+
 - ✅ `vehicles.php` (CRUD veículos)
 - ✅ `auth.php` (autenticação) ← **INCLUÍDO**
 - ✅ `upload.php` (upload) ← **INCLUÍDO**
@@ -120,16 +127,19 @@ Clique direito em `deploy-rvcar` → **Enviar para** → **Pasta compactada**
 - ⚠️ `config.php` **NÃO** incluído (será gerado pelo instalador)
 
 ### Instalador:
+
 - ✅ `install/index.php` (wizard completo)
 - ✅ `install/GUIA-INSTALADOR.md`
 
 ### Configurações:
+
 - ✅ `.htaccess` raiz (com `RewriteBase /rvcar/`)
 - ✅ `robots.txt`
 - ✅ `favicon.png`
 - ✅ `placeholder.svg`
 
 ### Estrutura:
+
 - ✅ `uploads/vehicles/` (pasta criada)
 
 ---
@@ -139,18 +149,21 @@ Clique direito em `deploy-rvcar` → **Enviar para** → **Pasta compactada**
 Esta pasta já contém **TODAS as correções**:
 
 ### ✅ Correção 1: .htaccess
+
 ```apache
 RewriteBase /rvcar/  # Adicionado
 RewriteRule ^(.*)$ /rvcar/index.html  # Corrigido
 ```
 
 ### ✅ Correção 2: APIs
+
 ```
 api/auth.php    ← INCLUÍDO (antes faltava)
 api/upload.php  ← INCLUÍDO (antes faltava)
 ```
 
 ### ✅ Correção 3: Veículos
+
 ```sql
 -- IDs únicos: veh_674e9f1a2b5c8
 -- Imagens: /placeholder.svg
@@ -161,10 +174,12 @@ api/upload.php  ← INCLUÍDO (antes faltava)
 ## 📝 DOCUMENTAÇÃO
 
 ### Dentro da pasta:
+
 - `LEIA-ME.txt` - Instruções completas (texto)
 - `INSTRUCOES-RAPIDAS.md` - Guia visual rápido
 
 ### No projeto:
+
 - `PRONTO-PARA-PRODUCAO.md` - Análise completa
 - `CORRECAO-HTACCESS-URGENTE.md` - Fix do .htaccess
 - `CORRECAO-APIS-FALTANDO.md` - Fix das APIs
@@ -175,12 +190,15 @@ api/upload.php  ← INCLUÍDO (antes faltava)
 ## ⚠️ IMPORTANTE
 
 ### Arquivos que SERÃO criados pelo instalador:
+
 - `/api/config.php` (conexão com banco)
 
 ### Arquivos que DEVEM ser deletados após instalar:
+
 - `/install/` (pasta inteira - segurança!)
 
 ### Arquivos que VOCÊ vai adicionar depois:
+
 - `/uploads/vehicles/*.jpg` (fotos reais dos carros)
 
 ---
@@ -210,11 +228,12 @@ api/upload.php  ← INCLUÍDO (antes faltava)
 ## 📞 SUPORTE
 
 Se tiver algum problema durante o deploy, consulte:
+
 - `LEIA-ME.txt` (dentro da pasta)
 - `PRONTO-PARA-PRODUCAO.md` (raiz do projeto)
 - Seção Troubleshooting no LEIA-ME.txt
 
 ---
 
-**Esta é a solução definitiva!** Não há mais dependência de scripts PowerShell. 
+**Esta é a solução definitiva!** Não há mais dependência de scripts PowerShell.
 Você tem controle total sobre os arquivos. ✅
