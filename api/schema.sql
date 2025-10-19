@@ -27,35 +27,35 @@ CREATE TABLE vehicles (
 
 -- Inserir veículos padrão
 INSERT INTO vehicles (id, name, price, image, features, available, created_at, updated_at) VALUES
-('1', 'Fiat Mobi', 'R$650', '/assets/mobi.jpg', 
+('veh_674e9f1a2b5c8', 'Fiat Mobi', 'R$650', '/placeholder.svg', 
  JSON_ARRAY('Econômico', 'Ar Condicionado', 'Direção Hidráulica', 'Perfeito para cidade'),
  TRUE, NOW(), NOW()),
 
-('2', 'Renault Kwid', 'R$650', '/assets/kwid.jpg',
+('veh_674e9f1a2b5c9', 'Renault Kwid', 'R$650', '/placeholder.svg',
  JSON_ARRAY('Compacto', 'Baixo consumo', 'Moderna tecnologia', 'Fácil manuseio'),
  TRUE, NOW(), NOW()),
 
-('3', 'Fiat Uno', 'R$650', '/assets/uno.jpg',
+('veh_674e9f1a2b5ca', 'Fiat Uno', 'R$650', '/placeholder.svg',
  JSON_ARRAY('Confiável', 'Peças acessíveis', 'Ótimo custo-benefício', 'Espaçoso'),
  TRUE, NOW(), NOW()),
 
-('4', 'Chevrolet Onix', 'R$700', '/assets/onix.jpg',
+('veh_674e9f1a2b5cb', 'Chevrolet Onix', 'R$700', '/placeholder.svg',
  JSON_ARRAY('Modelo popular', 'Conforto superior', 'Tecnologia moderna', 'Bom desempenho'),
  TRUE, NOW(), NOW()),
 
-('5', 'VW Gol', 'R$700', '/assets/gol.jpg',
+('veh_674e9f1a2b5cc', 'VW Gol', 'R$700', '/placeholder.svg',
  JSON_ARRAY('Líder de vendas', 'Confiabilidade', 'Manutenção fácil', 'Design moderno'),
  TRUE, NOW(), NOW()),
 
-('6', 'VW Voyage', 'R$700', '/assets/voyage.jpg',
+('veh_674e9f1a2b5cd', 'VW Voyage', 'R$700', '/placeholder.svg',
  JSON_ARRAY('Sedan espaçoso', 'Porta-malas amplo', 'Conforto extra', 'Elegante'),
  TRUE, NOW(), NOW()),
 
-('7', 'Renault Sandero', 'R$700', '/assets/sandero.jpg',
+('veh_674e9f1a2b5ce', 'Renault Sandero', 'R$700', '/placeholder.svg',
  JSON_ARRAY('Versátil', 'Espaço interno', 'Design arrojado', 'Bom desempenho'),
  TRUE, NOW(), NOW()),
 
-('8', 'Nissan Versa', 'R$700', '/assets/versa.jpg',
+('veh_674e9f1a2b5cf', 'Nissan Versa', 'R$700', '/placeholder.svg',
  JSON_ARRAY('Sedan premium', 'Espaço superior', 'Tecnologia avançada', 'Conforto total'),
  TRUE, NOW(), NOW());
 
