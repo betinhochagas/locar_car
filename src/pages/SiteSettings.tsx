@@ -32,6 +32,88 @@ const SiteSettings = () => {
     loadSettings();
   }, [navigate]);
 
+  // Função para converter HSL para HEX
+  const hslToHex = (hslString: string): string => {
+    // Parse HSL format: "48 100% 50%"
+    const matches = hslString.match(/(\d+)\s+(\d+)%\s+(\d+)%/);
+    if (!matches) return '';
+    
+    const h = parseInt(matches[1]) / 360;
+    const s = parseInt(matches[2]) / 100;
+    const l = parseInt(matches[3]) / 100;
+    
+    let r, g, b;
+    if (s === 0) {
+      r = g = b = l;
+    } else {
+      const hue2rgb = (p: number, q: number, t: number) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      };
+      
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    
+    const toHex = (x: number) => {
+      const hex = Math.round(x * 255).toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    };
+    
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  };
+
+  // Função para extrair cores CSS atuais do documento
+  const extractCurrentColors = (): Record<string, string> => {
+    const root = document.documentElement;
+    const style = getComputedStyle(root);
+    
+    const colorMap: Record<string, string> = {
+      'color_brand': style.getPropertyValue('--brand').trim(),
+      'color_brand_foreground': style.getPropertyValue('--brand-foreground').trim(),
+      'button_primary_bg': style.getPropertyValue('--button-primary').trim(),
+      'button_primary_text': style.getPropertyValue('--button-primary-foreground').trim(),
+      'button_primary_hover': style.getPropertyValue('--button-primary-hover').trim(),
+      'button_secondary_bg': style.getPropertyValue('--button-secondary').trim(),
+      'button_secondary_text': style.getPropertyValue('--button-secondary-foreground').trim(),
+      'button_secondary_hover': style.getPropertyValue('--button-secondary-hover').trim(),
+      'color_secondary': style.getPropertyValue('--secondary').trim(),
+      'color_secondary_foreground': style.getPropertyValue('--secondary-foreground').trim(),
+      'color_accent': style.getPropertyValue('--accent').trim(),
+      'color_accent_foreground': style.getPropertyValue('--accent-foreground').trim(),
+      'color_background': style.getPropertyValue('--background').trim(),
+      'color_text': style.getPropertyValue('--foreground').trim(),
+      'color_card': style.getPropertyValue('--card').trim(),
+      'color_card_foreground': style.getPropertyValue('--card-foreground').trim(),
+      'color_popover': style.getPropertyValue('--popover').trim(),
+      'color_popover_foreground': style.getPropertyValue('--popover-foreground').trim(),
+      'color_muted': style.getPropertyValue('--muted').trim(),
+      'color_muted_foreground': style.getPropertyValue('--muted-foreground').trim(),
+      'color_border': style.getPropertyValue('--border').trim(),
+      'color_input': style.getPropertyValue('--input').trim(),
+      'color_ring': style.getPropertyValue('--ring').trim(),
+      'color_destructive': style.getPropertyValue('--destructive').trim(),
+      'color_destructive_foreground': style.getPropertyValue('--destructive-foreground').trim(),
+    };
+    
+    // Converter HSL para HEX
+    const hexMap: Record<string, string> = {};
+    Object.entries(colorMap).forEach(([key, hsl]) => {
+      if (hsl) {
+        hexMap[key] = hslToHex(hsl);
+      }
+    });
+    
+    return hexMap;
+  };
+
   const loadSettings = async () => {
     try {
       setLoading(true);
@@ -41,6 +123,14 @@ const SiteSettings = () => {
       const configsObj: Record<string, string> = {};
       data.forEach((config: SiteConfig) => {
         configsObj[config.config_key] = String(config.config_value || '');
+      });
+      
+      // Se não houver cores salvas no banco, extrair do CSS atual
+      const currentColors = extractCurrentColors();
+      Object.entries(currentColors).forEach(([key, hex]) => {
+        if (!configsObj[key] && hex) {
+          configsObj[key] = hex;
+        }
       });
       
       setConfigs(configsObj);
@@ -53,6 +143,38 @@ const SiteSettings = () => {
   };
 
   const handleChange = (key: string, value: string) => {
+    // Validação e normalização de cores HEX
+    if (key.startsWith('color_') || key.startsWith('button_')) {
+      // Remove espaços
+      value = value.trim();
+      
+      // Se começa com #, valida
+      if (value.startsWith('#')) {
+        // Remove o #
+        let hex = value.substring(1);
+        
+        // Converte 3 dígitos para 6 (#fff -> #ffffff)
+        if (hex.length === 3) {
+          hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+          value = '#' + hex;
+        }
+        
+        // Valida se é hexadecimal válido (6 dígitos)
+        if (!/^[0-9A-Fa-f]{6}$/.test(hex)) {
+          // Se inválido, mostra feedback e não atualiza
+          toast.error(`Cor inválida: ${value}. Use formato #RRGGBB (ex: #1a56db)`);
+          return;
+        }
+        
+        // Normaliza para lowercase
+        value = value.toLowerCase();
+      } else if (value !== '') {
+        // Se não tem # e não está vazio, não atualiza
+        toast.error('Cor deve começar com # (ex: #1a56db)');
+        return;
+      }
+    }
+    
     setConfigs(prev => ({ ...prev, [key]: value }));
   };
 
@@ -415,18 +537,38 @@ const SiteSettings = () => {
               {/* Cores Principais */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Cores Principais</CardTitle>
-                  <CardDescription>Paleta de cores do site</CardDescription>
+                  <CardTitle>Cor da Marca</CardTitle>
+                  <CardDescription>Identidade visual: títulos, destaques e elementos da marca</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Alerta Explicativo */}
+                  <div className="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <svg className="h-5 w-5 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm text-purple-700">
+                          <strong>🎨 Cor da Marca:</strong> Esta é a cor da identidade visual do seu site. 
+                          Usada em títulos destacados, ícones, badges e elementos de marca. 
+                          <strong>NÃO afeta botões</strong> (configure botões na seção abaixo).
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
                   {[
-                    { key: 'color_primary', label: 'Cor Primária' },
-                    { key: 'color_primary_hover', label: 'Primária (Hover)' },
-                    { key: 'color_secondary', label: 'Cor Secundária' },
-                    { key: 'color_accent', label: 'Cor de Destaque' },
-                    { key: 'color_background', label: 'Fundo' },
-                    { key: 'color_text', label: 'Texto Principal' },
-                  ].map(({ key, label }) => (
+                    { key: 'color_brand', label: 'Cor da Marca', defaultValue: '#d16167' },
+                    { key: 'color_brand_foreground', label: 'Texto sobre Marca', defaultValue: '#fafafa' },
+                    { key: 'color_secondary', label: 'Cor Secundária', defaultValue: '#f5f5f5' },
+                    { key: 'color_secondary_foreground', label: 'Texto Secundário', defaultValue: '#1a1a1a' },
+                    { key: 'color_accent', label: 'Cor de Destaque', defaultValue: '#d9a518' },
+                    { key: 'color_accent_foreground', label: 'Texto Destaque', defaultValue: '#ffffff' },
+                    { key: 'color_background', label: 'Fundo da Página', defaultValue: '#fafafa' },
+                    { key: 'color_text', label: 'Texto Principal', defaultValue: '#1a1a1a' },
+                  ].map(({ key, label, defaultValue }) => (
                     <div key={key} className="flex items-center gap-4">
                       <div className="flex-1">
                         <Label htmlFor={key}>{label}</Label>
@@ -435,13 +577,13 @@ const SiteSettings = () => {
                           type="text"
                           value={configs[key] || ''}
                           onChange={(e) => handleChange(key, e.target.value)}
-                          placeholder="#1a56db"
+                          placeholder={defaultValue}
                         />
                       </div>
-                      <div className="w-16 h-10 border rounded" style={{ backgroundColor: configs[key] || '#fff' }}></div>
+                      <div className="w-16 h-10 border rounded" style={{ backgroundColor: configs[key] || defaultValue }}></div>
                       <Input
                         type="color"
-                        value={configs[key] || '#1a56db'}
+                        value={configs[key] || defaultValue}
                         onChange={(e) => handleChange(key, e.target.value)}
                         className="w-16 h-10 p-1 cursor-pointer"
                       />
@@ -454,17 +596,33 @@ const SiteSettings = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>Cores dos Botões</CardTitle>
-                  <CardDescription>Personalize os botões do site</CardDescription>
+                  <CardDescription>Controle independente da cor dos botões do site</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm text-blue-700">
+                          <strong>ℹ️ Informação:</strong> Estas cores são EXCLUSIVAS para os botões do site. 
+                          A "Cor da Marca" (seção acima) controla títulos, destaques e identidade visual.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
                   {[
-                    { key: 'button_primary_bg', label: 'Botão Primário (Fundo)' },
-                    { key: 'button_primary_text', label: 'Botão Primário (Texto)' },
-                    { key: 'button_primary_hover', label: 'Primário (Hover)' },
-                    { key: 'button_secondary_bg', label: 'Botão Secundário (Fundo)' },
-                    { key: 'button_secondary_text', label: 'Botão Secundário (Texto)' },
-                    { key: 'button_secondary_hover', label: 'Secundário (Hover)' },
-                  ].map(({ key, label }) => (
+                    { key: 'button_primary_bg', label: 'Botão Primário (Fundo)', defaultValue: '#8B0000' },
+                    { key: 'button_primary_text', label: 'Botão Primário (Texto)', defaultValue: '#ffffff' },
+                    { key: 'button_primary_hover', label: 'Botão Primário (Hover)', defaultValue: '#6B0000' },
+                    { key: 'button_secondary_bg', label: 'Botão Secundário (Fundo)', defaultValue: '#f5f5f5' },
+                    { key: 'button_secondary_text', label: 'Botão Secundário (Texto)', defaultValue: '#1a1a1a' },
+                    { key: 'button_secondary_hover', label: 'Botão Secundário (Hover)', defaultValue: '#e0e0e0' },
+                  ].map(({ key, label, defaultValue }) => (
                     <div key={key} className="flex items-center gap-4">
                       <div className="flex-1">
                         <Label htmlFor={key}>{label}</Label>
@@ -473,13 +631,88 @@ const SiteSettings = () => {
                           type="text"
                           value={configs[key] || ''}
                           onChange={(e) => handleChange(key, e.target.value)}
-                          placeholder="#1a56db"
+                          placeholder={defaultValue}
                         />
                       </div>
-                      <div className="w-16 h-10 border rounded" style={{ backgroundColor: configs[key] || '#fff' }}></div>
+                      <div className="w-16 h-10 border rounded" style={{ backgroundColor: configs[key] || defaultValue }}></div>
                       <Input
                         type="color"
-                        value={configs[key] || '#1a56db'}
+                        value={configs[key] || defaultValue}
+                        onChange={(e) => handleChange(key, e.target.value)}
+                        className="w-16 h-10 p-1 cursor-pointer"
+                      />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Cores de Card e Background */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Cards e Superfícies</CardTitle>
+                  <CardDescription>Cores de cards, popover e superfícies</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {[
+                    { key: 'color_card', label: 'Fundo do Card', defaultValue: '#ffffff' },
+                    { key: 'color_card_foreground', label: 'Texto do Card', defaultValue: '#1a1a1a' },
+                    { key: 'color_popover', label: 'Fundo Popover', defaultValue: '#ffffff' },
+                    { key: 'color_popover_foreground', label: 'Texto Popover', defaultValue: '#1a1a1a' },
+                    { key: 'color_muted', label: 'Cor Esmaecida', defaultValue: '#f0f0f0' },
+                    { key: 'color_muted_foreground', label: 'Texto Esmaecido', defaultValue: '#666666' },
+                  ].map(({ key, label, defaultValue }) => (
+                    <div key={key} className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <Label htmlFor={key}>{label}</Label>
+                        <Input
+                          id={key}
+                          type="text"
+                          value={configs[key] || ''}
+                          onChange={(e) => handleChange(key, e.target.value)}
+                          placeholder={defaultValue}
+                        />
+                      </div>
+                      <div className="w-16 h-10 border rounded" style={{ backgroundColor: configs[key] || defaultValue }}></div>
+                      <Input
+                        type="color"
+                        value={configs[key] || defaultValue}
+                        onChange={(e) => handleChange(key, e.target.value)}
+                        className="w-16 h-10 p-1 cursor-pointer"
+                      />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Cores de Borda e Destrutivas */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Bordas e Estados</CardTitle>
+                  <CardDescription>Bordas, inputs e estados de erro</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {[
+                    { key: 'color_border', label: 'Borda', defaultValue: '#e5e5e5' },
+                    { key: 'color_input', label: 'Borda Input', defaultValue: '#e5e5e5' },
+                    { key: 'color_ring', label: 'Anel de Foco', defaultValue: '#ffcc00' },
+                    { key: 'color_destructive', label: 'Cor Destrutiva (Erro)', defaultValue: '#ef4444' },
+                    { key: 'color_destructive_foreground', label: 'Texto Destrutivo', defaultValue: '#fafafa' },
+                  ].map(({ key, label, defaultValue }) => (
+                    <div key={key} className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <Label htmlFor={key}>{label}</Label>
+                        <Input
+                          id={key}
+                          type="text"
+                          value={configs[key] || ''}
+                          onChange={(e) => handleChange(key, e.target.value)}
+                          placeholder={defaultValue}
+                        />
+                      </div>
+                      <div className="w-16 h-10 border rounded" style={{ backgroundColor: configs[key] || defaultValue }}></div>
+                      <Input
+                        type="color"
+                        value={configs[key] || defaultValue}
                         onChange={(e) => handleChange(key, e.target.value)}
                         className="w-16 h-10 p-1 cursor-pointer"
                       />

@@ -87,20 +87,106 @@ export const SiteConfigProvider: React.FC<SiteConfigProviderProps> = ({ children
     }
   };
 
+  // Função auxiliar para converter HEX para HSL
+  const hexToHSL = (hex: string): string => {
+    // Validação de entrada
+    if (!hex || typeof hex !== 'string') return '0 0% 50%';
+    
+    // Remove o # se presente
+    hex = hex.replace('#', '').trim();
+    
+    // Converte 3 dígitos para 6
+    if (hex.length === 3) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    
+    // Valida formato
+    if (!/^[0-9A-Fa-f]{6}$/.test(hex)) return '0 0% 50%';
+    
+    // Converte para RGB
+    const r = parseInt(hex.substring(0, 2), 16) / 255;
+    const g = parseInt(hex.substring(2, 4), 16) / 255;
+    const b = parseInt(hex.substring(4, 6), 16) / 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h = 0, s = 0, l = (max + min) / 2;
+    
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    
+    h = Math.round(h * 360);
+    s = Math.round(s * 100);
+    l = Math.round(l * 100);
+    
+    return `${h} ${s}% ${l}%`;
+  };
+
   const applyCSSVariables = (configMap: Record<string, string>) => {
     const root = document.documentElement;
     
-    // Aplicar cores
-    if (configMap.color_primary) root.style.setProperty('--color-primary', configMap.color_primary);
-    if (configMap.color_secondary) root.style.setProperty('--color-secondary', configMap.color_secondary);
-    if (configMap.color_accent) root.style.setProperty('--color-accent', configMap.color_accent);
-    if (configMap.color_background) root.style.setProperty('--color-background', configMap.color_background);
-    if (configMap.color_text) root.style.setProperty('--color-text', configMap.color_text);
-    if (configMap.color_text_light) root.style.setProperty('--color-text-light', configMap.color_text_light);
-    if (configMap.color_border) root.style.setProperty('--color-border', configMap.color_border);
-    if (configMap.color_success) root.style.setProperty('--color-success', configMap.color_success);
-    if (configMap.color_error) root.style.setProperty('--color-error', configMap.color_error);
-    if (configMap.color_warning) root.style.setProperty('--color-warning', configMap.color_warning);
+    // Função auxiliar para aplicar cor (converte HEX para HSL se necessário)
+    const applyColor = (cssVar: string, hexColor: string) => {
+      if (hexColor) {
+        const hslValue = hexToHSL(hexColor);
+        root.style.setProperty(cssVar, hslValue);
+      }
+    };
+    
+    // Aplicar cor da marca
+    applyColor('--brand', configMap.color_brand);
+    applyColor('--brand-foreground', configMap.color_brand_foreground);
+    
+    // Aplicar cores dos botões (INDEPENDENTE da marca)
+    applyColor('--button-primary', configMap.button_primary_bg);
+    applyColor('--button-primary-foreground', configMap.button_primary_text);
+    applyColor('--button-primary-hover', configMap.button_primary_hover);
+    applyColor('--button-secondary', configMap.button_secondary_bg);
+    applyColor('--button-secondary-foreground', configMap.button_secondary_text);
+    applyColor('--button-secondary-hover', configMap.button_secondary_hover);
+    
+    // Aplicar cores gerais
+    applyColor('--secondary', configMap.color_secondary);
+    applyColor('--secondary-foreground', configMap.color_secondary_foreground);
+    applyColor('--accent', configMap.color_accent);
+    applyColor('--accent-foreground', configMap.color_accent_foreground);
+    applyColor('--background', configMap.color_background);
+    applyColor('--foreground', configMap.color_text);
+    
+    // Manter primary como alias de brand (compatibilidade)
+    root.style.setProperty('--primary', root.style.getPropertyValue('--brand'));
+    root.style.setProperty('--primary-foreground', root.style.getPropertyValue('--brand-foreground'));
+    
+    // Aplicar cores de cards e superfícies
+    applyColor('--card', configMap.color_card);
+    applyColor('--card-foreground', configMap.color_card_foreground);
+    applyColor('--popover', configMap.color_popover);
+    applyColor('--popover-foreground', configMap.color_popover_foreground);
+    applyColor('--muted', configMap.color_muted);
+    applyColor('--muted-foreground', configMap.color_muted_foreground);
+    
+    // Aplicar cores de bordas e estados
+    applyColor('--border', configMap.color_border);
+    applyColor('--input', configMap.color_input);
+    applyColor('--ring', configMap.color_ring);
+    applyColor('--destructive', configMap.color_destructive);
+    applyColor('--destructive-foreground', configMap.color_destructive_foreground);
+    
+    // Aplicar cores dos botões (compatibilidade com código antigo)
+    applyColor('--color-primary', configMap.color_primary);
+    applyColor('--color-secondary', configMap.color_secondary);
+    applyColor('--color-accent', configMap.color_accent);
+    applyColor('--color-background', configMap.color_background);
+    applyColor('--color-text', configMap.color_text);
+    applyColor('--color-border', configMap.color_border);
   };
 
   const getConfig = (key: string, defaultValue: string = ''): string => {

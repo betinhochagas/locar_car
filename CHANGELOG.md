@@ -5,6 +5,76 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [2.3.0] - 2025-11-19
+
+### Adicionado
+
+#### 🎨 Editor Visual de Blocos
+
+- ✅ **Editor visual completo** sem necessidade de código
+- ✅ **6 tipos de blocos:**
+  - 📝 Título (H1/H2/H3 com alinhamento)
+  - 📄 Parágrafo (texto multilinha com alinhamento)
+  - 🖼️ Imagem (upload + alt text + legenda)
+  - 🔘 Botão (3 estilos: primary/secondary/outline)
+  - 📋 Lista (adicionar/remover itens dinamicamente)
+  - ━ Divisor (linha horizontal)
+- ✅ **Controles intuitivos:** adicionar, remover, reordenar com setas
+- ✅ **Preview em tempo real** em abas separadas
+- ✅ **Componente CustomSection** para renderizar blocos no site
+
+#### 📚 Documentação Consolidada
+
+- ✅ **README.md** moderno com badges e quick start
+- ✅ **DOCUMENTACAO.md** completa (500+ linhas):
+  - Instalação detalhada (3 métodos)
+  - Configuração (env, cores, PHP)
+  - Guia do painel admin (veículos, settings, seções, uploads)
+  - Deploy guides (cPanel, VPS, Netlify)
+  - API documentation (todos endpoints)
+  - Security best practices
+  - Troubleshooting completo
+  - Project structure
+  - Quick tutorials
+  - Contributing guidelines
+- ✅ **EDITOR-VISUAL-BLOCOS.md** (380+ linhas):
+  - Como funciona o editor
+  - Tutorial de cada bloco
+  - Exemplos práticos
+  - Dicas de design
+  - FAQ
+
+#### 🎯 Interface Visual para Seções
+
+- ✅ **Formulários específicos** para cada tipo de seção
+- ✅ **Sistema de abas:** Formulário | Pré-visualização
+- ✅ **Gerenciamento de arrays** com add/remove buttons
+- ✅ **Star rating system** interativo
+- ✅ **Upload de imagens** integrado
+- ✅ **Preview dinâmico** mostra resultado final
+
+### Modificado
+
+- ✅ **SectionFormBuilder.tsx:** adicionado editor de blocos completo
+- ✅ **SectionPreview.tsx:** renderização de todos os blocos
+- ✅ **DynamicSection.tsx:** suporte a blocks + HTML legacy
+- ✅ **Sistema de cores:** separação brand colors vs button colors
+- ✅ **Upload manager:** suporte multi-tipo (vehicle, logo, favicon, section)
+
+### Removido
+
+- 🗑️ **129 arquivos de documentação antiga** consolidados
+- 🗑️ **Requirement de código HTML** para seções customizadas
+- 🗑️ **JSON editing manual** substituído por forms visuais
+
+### Melhorado
+
+- ⚡ **Performance:** build otimizado (496 kB bundle, 149 kB gzip)
+- 🎨 **UX:** interface 100% visual, sem código
+- 📱 **Mobile:** todos formulários responsivos
+- ♿ **Acessibilidade:** componentes com ARIA labels
+- 🔒 **Segurança:** validação de uploads, sanitização de inputs
+
 ## [1.0.0] - 2024-10-14
 
 ### Adicionado

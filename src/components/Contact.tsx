@@ -7,7 +7,17 @@ import { MapPin, Phone, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
-const Contact = () => {
+interface ContactProps {
+  content?: {
+    title?: string;
+    subtitle?: string;
+    show_form?: boolean;
+    show_map?: boolean;
+    map_embed?: string;
+  };
+}
+
+const Contact = ({ content }: ContactProps) => {
   const { getConfig } = useSiteConfig();
   const [formData, setFormData] = useState({
     name: "",
@@ -17,6 +27,8 @@ const Contact = () => {
   });
   
   // Configurações dinâmicas
+  const title = content?.title || 'Fale Conosco';
+  const subtitle = content?.subtitle || 'Entre em contato conosco e tire suas dúvidas';
   const contactPhone = getConfig('contact_phone', '');
   const contactWhatsapp = getConfig('contact_whatsapp', '');
   const contactEmail = getConfig('contact_email', '');
@@ -38,34 +50,41 @@ const Contact = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Entre em <span className="text-primary">Contato</span>
+            {title.includes('Contato') ? (
+              <>
+                {title.split('Contato')[0]}<span className="text-primary">Contato</span>{title.split('Contato')[1]}
+              </>
+            ) : (
+              title
+            )}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Estamos prontos para atender você. Preencha o formulário ou entre em contato direto pelo WhatsApp.
+            {subtitle}
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          <div className="animate-slide-in-right">
-            <Card className="border-border h-full">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-6">Envie sua Mensagem</h3>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <Input
-                      placeholder="Seu Nome"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      type="email"
-                      placeholder="Seu E-mail"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      required
+          {(content?.show_form !== false) && (
+            <div className="animate-slide-in-right">
+              <Card className="border-border h-full">
+                <CardContent className="p-8">
+                  <h3 className="text-2xl font-bold mb-6">Envie sua Mensagem</h3>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <Input
+                        placeholder="Seu Nome"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="email"
+                        placeholder="Seu E-mail"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
                     />
                   </div>
                   <div>
@@ -93,6 +112,7 @@ const Contact = () => {
               </CardContent>
             </Card>
           </div>
+          )}
 
           <div className="space-y-6 animate-fade-in">
             {contactAddress && (

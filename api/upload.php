@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Configurações
-$upload_type = isset($_POST['type']) ? $_POST['type'] : 'vehicle'; // 'vehicle', 'logo', 'favicon'
+$upload_type = isset($_POST['type']) ? $_POST['type'] : 'vehicle'; // 'vehicle', 'logo', 'favicon', 'section'
 $base_upload_dir = __DIR__ . '/../uploads/';
 $base_public_dir = __DIR__ . '/../public/uploads/';
 
@@ -96,6 +96,10 @@ if ($upload_type === 'logo' || $upload_type === 'favicon') {
     $upload_dir = $base_upload_dir . 'site/';
     $public_dir = $base_public_dir . 'site/';
     $web_path = '/uploads/site/';
+} elseif ($upload_type === 'section') {
+    $upload_dir = $base_upload_dir . 'sections/';
+    $public_dir = $base_public_dir . 'sections/';
+    $web_path = '/uploads/sections/';
 } else {
     $upload_dir = $base_upload_dir . 'vehicles/';
     $public_dir = $base_public_dir . 'vehicles/';

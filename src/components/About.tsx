@@ -2,11 +2,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
-const About = () => {
+interface AboutProps {
+  content?: {
+    title?: string;
+    content?: string;
+    mission?: string;
+    vision?: string;
+  };
+}
+
+const About = ({ content }: AboutProps) => {
   const { getConfig } = useSiteConfig();
   const siteName = getConfig('site_name', '');
   const contactEmail = getConfig('contact_email', '');
   const contactPhone = getConfig('contact_phone', '');
+  
+  const title = content?.title || (siteName ? `Sobre a ${siteName}` : 'Sobre Nós');
+  const subtitle = content?.content || 'Conheça mais sobre nossa empresa';
+  const mission = content?.mission || 'Facilitar o acesso a veículos de qualidade para motoristas de aplicativo, proporcionando autonomia financeira e oportunidades de crescimento através de soluções acessíveis e confiáveis.';
+  const vision = content?.vision;
   
   return (
     <section id="sobre" className="py-20 bg-background">
@@ -14,18 +28,20 @@ const About = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              {siteName ? (
+              {title.includes(siteName) && siteName ? (
                 <>
-                  Sobre a <span className="text-primary">{siteName}</span>
+                  {title.split(siteName)[0]}<span className="text-primary">{siteName}</span>{title.split(siteName)[1]}
+                </>
+              ) : title.includes('Nós') ? (
+                <>
+                  {title.split('Nós')[0]}<span className="text-primary">Nós</span>{title.split('Nós')[1]}
                 </>
               ) : (
-                <>
-                  Sobre <span className="text-primary">Nós</span>
-                </>
+                title
               )}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Conheça mais sobre nossa empresa
+              {subtitle}
             </p>
           </div>
 
@@ -34,23 +50,34 @@ const About = () => {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Nossa Missão</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Facilitar o acesso a veículos de qualidade para motoristas de aplicativo, 
-                  proporcionando autonomia financeira e oportunidades de crescimento através 
-                  de soluções acessíveis e confiáveis.
+                  {mission}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-border animate-fade-in" style={{ animationDelay: "100ms" }}>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Nossa Visão</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Ser referência em locação de veículos e gestão de frotas em Santa Catarina, 
-                  reconhecida pela excelência no atendimento, transparência nas relações e 
-                  retorno consistente para nossos investidores.
-                </p>
-              </CardContent>
-            </Card>
+            {vision && (
+              <Card className="border-border animate-fade-in" style={{ animationDelay: "100ms" }}>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold mb-4">Nossa Visão</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {vision}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+            
+            {!vision && (
+              <Card className="border-border animate-fade-in" style={{ animationDelay: "100ms" }}>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold mb-4">Nossa Visão</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Ser referência em locação de veículos e gestão de frotas em Santa Catarina, 
+                    reconhecida pela excelência no atendimento, transparência nas relações e 
+                    retorno consistente para nossos investidores.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">

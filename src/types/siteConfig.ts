@@ -54,7 +54,22 @@ export interface SocialMediaConfig {
 
 // Page Section Types
 
-export type SectionType = 'hero' | 'features' | 'vehicles' | 'about' | 'contact' | 'testimonials' | 'custom';
+export type SectionType = 
+  | 'hero' 
+  | 'features' 
+  | 'services'
+  | 'vehicles' 
+  | 'about' 
+  | 'contact' 
+  | 'testimonials' 
+  | 'investment'
+  | 'cta'
+  | 'stats'
+  | 'pricing'
+  | 'faq'
+  | 'gallery'
+  | 'benefits'
+  | 'custom';
 
 export interface PageSection {
   id: number;

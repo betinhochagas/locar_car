@@ -17,8 +17,22 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
 
-    --primary: 48 100% 50%;
-    --primary-foreground: 0 0% 10%;
+    /* Cor da Marca (títulos, destaques, identidade visual) */
+    --brand: 0 84% 40%;
+    --brand-foreground: 0 0% 98%;
+
+    /* Cor dos Botões (independente da marca) */
+    --button-primary: 0 84% 40%;
+    --button-primary-foreground: 0 0% 98%;
+    --button-primary-hover: 0 84% 35%;
+    
+    --button-secondary: 0 0% 96%;
+    --button-secondary-foreground: 0 0% 10%;
+    --button-secondary-hover: 0 0% 90%;
+
+    /* Primary = alias para brand (compatibilidade) */
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-foreground);
 
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 10%;
@@ -63,8 +77,20 @@ All colors MUST be HSL.
     --popover: 0 0% 12%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 48 100% 50%;
-    --primary-foreground: 0 0% 10%;
+    /* Dark mode */
+    --brand: 0 84% 45%;
+    --brand-foreground: 0 0% 98%;
+
+    --button-primary: 0 84% 45%;
+    --button-primary-foreground: 0 0% 98%;
+    --button-primary-hover: 0 84% 40%;
+    
+    --button-secondary: 0 0% 16%;
+    --button-secondary-foreground: 0 0% 98%;
+    --button-secondary-hover: 0 0% 20%;
+
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-foreground);
 
     --secondary: 0 0% 16%;
     --secondary-foreground: 0 0% 98%;

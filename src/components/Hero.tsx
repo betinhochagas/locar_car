@@ -5,20 +5,33 @@ import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import heroBg from "@/assets/hero-bg.jpg";
 import ConsultantModal from "./ConsultantModal";
 
-const Hero = () => {
+interface HeroProps {
+  content?: {
+    title?: string;
+    subtitle?: string;
+    background_image?: string;
+    cta_text?: string;
+    cta_link?: string;
+  };
+}
+
+const Hero = ({ content }: HeroProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { getConfig } = useSiteConfig();
   
-  // Configurações dinâmicas
+  // Configurações dinâmicas (fallback para site-settings se não vier do content)
   const siteName = getConfig('site_name', '');
-  const buttonCtaText = getConfig('button_cta_text', '');
+  const buttonCtaText = content?.cta_text || getConfig('button_cta_text', 'Fale Conosco');
+  const title = content?.title || 'Aluguel de Carros para Motoristas de App';
+  const subtitle = content?.subtitle || 'Veículos prontos para trabalhar, com manutenção em dia e planos semanais acessíveis. A partir de R$650/semana.';
+  const backgroundImage = content?.background_image || heroBg;
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-16">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src={heroBg}
+          src={backgroundImage}
           alt={`${siteName} - Locação de Veículos`}
           className="w-full h-full object-cover"
         />
@@ -28,18 +41,28 @@ const Hero = () => {
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl animate-fade-in">
-          <div className="inline-block mb-4 px-4 py-2 bg-primary/20 backdrop-blur-sm rounded-full border border-primary/30">
-            <span className="text-primary font-semibold">Locação e Investimento</span>
-          </div>
-          
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            Aluguel de Carros para{" "}
-            <span className="text-primary">Motoristas de App</span>
+            {title.includes('Motoristas de App') ? (
+              <>
+                {title.split('Motoristas de App')[0]}
+                <span className="text-primary">Motoristas de App</span>
+                {title.split('Motoristas de App')[1]}
+              </>
+            ) : (
+              title
+            )}
           </h1>
           
           <p className="text-lg sm:text-xl text-white/90 mb-8 leading-relaxed">
-            Veículos prontos para trabalhar, com manutenção em dia e planos semanais acessíveis. 
-            <span className="text-primary font-semibold"> A partir de R$650/semana.</span>
+            {subtitle.includes('R$') ? (
+              <>
+                {subtitle.split(/R\$\d+/)[0]}
+                <span className="text-primary font-semibold">{subtitle.match(/R\$\d+[^.]*/)?.[0]}</span>
+                {subtitle.split(/R\$\d+[^.]*/)[1]}
+              </>
+            ) : (
+              subtitle
+            )}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">

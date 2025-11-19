@@ -6,6 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ImageUpload from '@/components/ImageUpload';
+import SectionFormBuilder from '@/components/SectionFormBuilder';
+import SectionPreview from '@/components/SectionPreview';
 import {
   Dialog,
   DialogContent,
@@ -79,6 +83,27 @@ const PageSections = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getSectionTemplate = (type: SectionType) => {
+    const templates: Record<SectionType, any> = {
+      hero: { title: 'Bem-vindo', subtitle: 'Subtítulo', background_image: '/hero-bg.jpg', cta_text: 'Saiba Mais', cta_link: '#' },
+      services: {},
+      features: { title: 'Recursos', subtitle: '', items: [] },
+      vehicles: { title: 'Veículos', subtitle: '', show_filters: true, show_availability: true },
+      investment: {},
+      about: { title: 'Sobre Nós', content: 'Texto sobre a empresa', image: '/about.jpg' },
+      contact: { title: 'Contato', subtitle: '', show_form: true, show_map: false },
+      cta: { title: 'Pronto para começar?', subtitle: 'Entre em contato', primary_button: 'Fale Conosco', secondary_button: 'Saiba Mais' },
+      stats: { title: 'Números', subtitle: '', stats: [{ number: '100+', label: 'Clientes' }, { number: '500+', label: 'Veículos' }] },
+      testimonials: { title: 'Depoimentos', subtitle: '', testimonials: [{ text: 'Ótimo serviço!', author: 'João Silva', rating: 5 }] },
+      pricing: { title: 'Planos', subtitle: '', plans: [{ name: 'Básico', price: 'R$ 650', period: 'semana', features: ['Manutenção incluída'], cta: 'Escolher' }] },
+      faq: { title: 'FAQ', subtitle: '', faqs: [{ question: 'Como funciona?', answer: 'Resposta aqui' }] },
+      gallery: { title: 'Galeria', subtitle: '', images: ['/img1.jpg', '/img2.jpg'] },
+      benefits: { title: 'Benefícios', subtitle: '', benefits: [{ icon: 'shield', title: 'Segurança', description: 'Descrição' }] },
+      custom: { html: '<div>HTML personalizado aqui</div>' },
+    };
+    return templates[type] || {};
   };
 
   const handleOpenAddDialog = () => {
@@ -190,14 +215,12 @@ const PageSections = () => {
                 placeholder="Subtítulo"
               />
             </div>
-            <div className="space-y-2">
-              <Label>Imagem de Fundo</Label>
-              <Input
-                value={formData.content.background_image || ''}
-                onChange={(e) => handleContentChange('background_image', e.target.value)}
-                placeholder="/hero-bg.jpg"
-              />
-            </div>
+            <ImageUpload
+              label="Imagem de Fundo"
+              value={formData.content.background_image || ''}
+              onChange={(url) => handleContentChange('background_image', url)}
+              placeholder="/hero-bg.jpg"
+            />
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Texto do Botão</Label>
@@ -239,14 +262,12 @@ const PageSections = () => {
                 rows={4}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Imagem</Label>
-              <Input
-                value={formData.content.image || ''}
-                onChange={(e) => handleContentChange('image', e.target.value)}
-                placeholder="/about.jpg"
-              />
-            </div>
+            <ImageUpload
+              label="Imagem"
+              value={formData.content.image || ''}
+              onChange={(url) => handleContentChange('image', url)}
+              placeholder="/about.jpg"
+            />
           </>
         );
 
@@ -288,10 +309,37 @@ const PageSections = () => {
           </>
         );
 
+      case 'cta':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label>Título</Label>
+              <Input value={formData.content.title || ''} onChange={(e) => handleContentChange('title', e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Subtítulo</Label>
+              <Input value={formData.content.subtitle || ''} onChange={(e) => handleContentChange('subtitle', e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Botão Primário</Label>
+                <Input value={formData.content.primary_button || ''} onChange={(e) => handleContentChange('primary_button', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Botão Secundário</Label>
+                <Input value={formData.content.secondary_button || ''} onChange={(e) => handleContentChange('secondary_button', e.target.value)} />
+              </div>
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
             <Label>Conteúdo (JSON)</Label>
+            <div className="text-xs text-gray-600 mb-2">
+              💡 <strong>Dica:</strong> Use o botão "Carregar Template" acima para ver exemplos
+            </div>
             <Textarea
               value={JSON.stringify(formData.content, null, 2)}
               onChange={(e) => {
@@ -302,8 +350,9 @@ const PageSections = () => {
                   // Ignorar erro de parsing enquanto digita
                 }
               }}
-              rows={10}
+              rows={15}
               className="font-mono text-sm"
+              placeholder='{ "key": "value" }'
             />
           </div>
         );
@@ -348,6 +397,23 @@ const PageSections = () => {
 
       {/* Content */}
       <div className="container mx-auto px-4 py-8">
+        {/* Info Alert */}
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-blue-700">
+                <strong>💡 Sistema Dinâmico:</strong> As seções aqui configuradas aparecem automaticamente no site. 
+                Arraste para reordenar, ative/desative para controlar visibilidade. Seções inativas não aparecem no site.
+              </p>
+            </div>
+          </div>
+        </div>
+        
         <div className="space-y-4">
           {sections.map((section) => (
             <Card key={section.id} className={!section.is_active ? 'opacity-60' : ''}>
@@ -373,6 +439,11 @@ const PageSections = () => {
                       <p className="text-xs text-gray-500 mt-1">
                         Ordem: {section.display_order}
                       </p>
+                      {section.content.title && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Título: "{section.content.title}"
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -448,22 +519,48 @@ const PageSections = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Tipo de Seção</Label>
+                <div className="flex items-center justify-between">
+                  <Label>Tipo de Seção</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      const template = getSectionTemplate(formData.section_type);
+                      setFormData(prev => ({ ...prev, content: template }));
+                    }}
+                  >
+                    Carregar Template
+                  </Button>
+                </div>
                 <Select
                   value={formData.section_type}
-                  onValueChange={(value: SectionType) => setFormData(prev => ({ ...prev, section_type: value }))}
+                  onValueChange={(value: SectionType) => {
+                    setFormData(prev => ({ ...prev, section_type: value }));
+                    // Auto-carregar template ao mudar tipo
+                    const template = getSectionTemplate(value);
+                    setFormData(prev => ({ ...prev, content: template }));
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="hero">Hero</SelectItem>
-                    <SelectItem value="features">Recursos</SelectItem>
-                    <SelectItem value="vehicles">Veículos</SelectItem>
-                    <SelectItem value="about">Sobre</SelectItem>
-                    <SelectItem value="contact">Contato</SelectItem>
-                    <SelectItem value="testimonials">Depoimentos</SelectItem>
-                    <SelectItem value="custom">Personalizada</SelectItem>
+                    <SelectItem value="hero">🎯 Hero (Banner Principal)</SelectItem>
+                    <SelectItem value="services">⭐ Serviços</SelectItem>
+                    <SelectItem value="features">✨ Recursos</SelectItem>
+                    <SelectItem value="vehicles">🚗 Veículos</SelectItem>
+                    <SelectItem value="investment">💰 Investimento</SelectItem>
+                    <SelectItem value="about">ℹ️ Sobre Nós</SelectItem>
+                    <SelectItem value="contact">📞 Contato</SelectItem>
+                    <SelectItem value="cta">📢 Call to Action</SelectItem>
+                    <SelectItem value="stats">📊 Estatísticas</SelectItem>
+                    <SelectItem value="testimonials">💬 Depoimentos</SelectItem>
+                    <SelectItem value="pricing">💵 Planos e Preços</SelectItem>
+                    <SelectItem value="faq">❓ Perguntas Frequentes</SelectItem>
+                    <SelectItem value="gallery">🖼️ Galeria de Imagens</SelectItem>
+                    <SelectItem value="benefits">✅ Benefícios</SelectItem>
+                    <SelectItem value="custom">🔧 Personalizada (HTML)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -485,9 +582,34 @@ const PageSections = () => {
               <Label>Seção Ativa</Label>
             </div>
 
-            <div className="border-t pt-4 space-y-4">
-              <h4 className="font-semibold">Conteúdo da Seção</h4>
-              {renderContentFields()}
+            <div className="border-t pt-4">
+              <Tabs defaultValue="form" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="form">📝 Formulário</TabsTrigger>
+                  <TabsTrigger value="preview">👁️ Pré-visualização</TabsTrigger>
+                </TabsList>
+                <TabsContent value="form" className="mt-4 space-y-4">
+                  <SectionFormBuilder
+                    type={formData.section_type}
+                    content={formData.content}
+                    onChange={(newContent) => setFormData(prev => ({ ...prev, content: newContent }))}
+                  />
+                </TabsContent>
+                <TabsContent value="preview" className="mt-4">
+                  <Card className="border-2 border-dashed">
+                    <CardContent className="p-0">
+                      <SectionPreview
+                        type={formData.section_type}
+                        content={formData.content}
+                        sectionName={formData.section_name}
+                      />
+                    </CardContent>
+                  </Card>
+                  <p className="text-xs text-muted-foreground text-center mt-2">
+                    Esta é uma prévia aproximada. O resultado final pode variar no site.
+                  </p>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 /**
  * UploadManager - Gerenciador de Upload de Imagens
  */
+import { getAuthHeader } from './authManager';
 
 const getUploadApiUrl = (): string => {
   if (import.meta.env.VITE_API_URL) {
@@ -39,14 +40,15 @@ interface UploadResponse {
 }
 
 interface UploadOptions {
-  type?: 'vehicle' | 'logo' | 'favicon';
+  type?: 'vehicle' | 'logo' | 'favicon' | 'section';
+  requireAuth?: boolean;
 }
 
 /**
  * Fazer upload de imagem
  */
 export const uploadImage = async (file: File, options: UploadOptions = {}): Promise<string> => {
-  const { type = 'vehicle' } = options;
+  const { type = 'vehicle', requireAuth = false } = options;
   
   // Validar tipo de arquivo
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -65,10 +67,20 @@ export const uploadImage = async (file: File, options: UploadOptions = {}): Prom
   formData.append('image', file);
   formData.append('type', type);
 
+  // Preparar headers
+  const headers: HeadersInit = {};
+  if (requireAuth) {
+    const authHeader = getAuthHeader();
+    if (authHeader) {
+      headers['Authorization'] = authHeader;
+    }
+  }
+
   // Fazer upload
   const response = await fetch(UPLOAD_API_URL, {
     method: 'POST',
     body: formData,
+    headers,
   });
 
   if (!response.ok) {

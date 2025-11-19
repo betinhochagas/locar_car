@@ -24,6 +24,10 @@ data/site-settings.json
 data/page-sections.json
 data/vehicles.json
 
+# Uploaded images
+uploads/
+public/uploads/
+
 # PHP Configuration (production only - not for local development)
 api/config.production.php
 
