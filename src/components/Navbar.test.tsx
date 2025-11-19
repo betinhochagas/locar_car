@@ -11,10 +11,10 @@ vi.mock('@/contexts/SiteConfigContext', () => ({
   useSiteConfig: () => ({
     getConfig: vi.fn((key: string, defaultValue: string) => {
       const mockConfig: Record<string, string> = {
-        site_name: 'RV Car Solutions',
+        site_name: 'Locadora de Veículos',
         site_tagline: 'Soluções em locação de veículos',
         site_logo: '/logo.svg',
-        site_logo_alt: 'RV Car Solutions',
+        site_logo_alt: 'Locadora de Veículos',
         contact_phone: '(11) 99999-9999',
         contact_whatsapp: '5511999999999',
       };
@@ -38,11 +38,11 @@ describe('Navbar', () => {
     renderNavbar();
 
     // Check for logo
-    const logo = screen.getByAltText('RV Car Solutions');
+    const logo = screen.getByAltText('Locadora de Veículos');
     expect(logo).toBeInTheDocument();
 
     // Check for navigation text
-    expect(screen.getByText('RV Car Solutions')).toBeInTheDocument();
+    expect(screen.getByText('Locadora de Veículos')).toBeInTheDocument();
     expect(screen.getByText('Início')).toBeInTheDocument();
   });
 
@@ -105,7 +105,7 @@ describe('Navbar', () => {
   it('should have logo with proper alt text', () => {
     renderNavbar();
 
-    const logo = screen.getByAltText('RV Car Solutions');
+    const logo = screen.getByAltText('Locadora de Veículos');
     expect(logo).toHaveAttribute('src', expect.stringContaining('logo.svg'));
   });
 });
