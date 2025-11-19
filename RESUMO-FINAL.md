@@ -21,7 +21,7 @@
 ## 📁 Estrutura Final da Documentação
 
 ```
-rv-car-solutions-main/
+locadora/
 ├── README.md                    # 🏠 Visão geral + Quick Start
 ├── DOCUMENTACAO.md              # 📚 Documentação completa (500+ linhas)
 ├── EDITOR-VISUAL-BLOCOS.md      # 🎨 Guia do editor visual (380+ linhas)
@@ -355,7 +355,7 @@ rv-car-solutions-main/
 
 ### Repositório
 
-- GitHub: https://github.com/betinhochagas/rvcar
+- GitHub: https://github.com/betinhochagas/locar_car
 
 ### Documentação
 

@@ -1,4 +1,4 @@
-# 🚗 RV Car Solutions
+# 🚗 Sistema de Gestão de Locadora
 
 > Sistema completo de gestão de locação de veículos com painel administrativo intuitivo
 
@@ -11,7 +11,7 @@
 
 ## 📋 Sobre
 
-**RV Car Solutions** é uma plataforma web moderna para empresas de locação de veículos, com foco em motoristas de aplicativos.
+Plataforma web moderna para empresas de locação de veículos, com foco em motoristas de aplicativos.
 
 ### ✨ Principais Recursos
 
@@ -30,8 +30,8 @@
 
 ```bash
 # Clone
-git clone https://github.com/betinhochagas/rvcar.git
-cd rv-car-solutions-main
+git clone https://github.com/betinhochagas/locar_car.git
+cd locar_car
 
 # Instale
 npm install
@@ -125,8 +125,8 @@ MySQL 8+ (ou XAMPP)
 1. **Clone o repositório**
 
    ```bash
-   git clone https://github.com/betinhochagas/rvcar.git
-   cd rv-car-solutions-main
+   git clone https://github.com/betinhochagas/locar_car.git
+   cd locar_car
    ```
 
 2. **Instale dependências**
@@ -245,9 +245,9 @@ Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE) para mais detalhe
 
 Encontrou um bug ou tem uma sugestão?
 
-- 🐛 [Reporte Issues](https://github.com/betinhochagas/rvcar/issues)
+- 🐛 [Reporte Issues](https://github.com/betinhochagas/locar_car/issues)
 - 📖 [Consulte a Documentação](DOCUMENTACAO.md)
-- 💬 [Discussões](https://github.com/betinhochagas/rvcar/discussions)
+- 💬 [Discussões](https://github.com/betinhochagas/locar_car/discussions)
 
 ---
 
@@ -273,6 +273,6 @@ Encontrou um bug ou tem uma sugestão?
 
 **Desenvolvido com ❤️ por [betinhochagas](https://github.com/betinhochagas)**
 
-[⬆ Voltar ao topo](#-rv-car-solutions)
+[⬆ Voltar ao topo](#-sistema-de-gestão-de-locadora)
 
 </div>

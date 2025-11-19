@@ -97,7 +97,7 @@ const SectionFormBuilder = ({ type, content = {}, onChange }: SectionFormBuilder
           <Input
             value={content.title || ''}
             onChange={(e) => updateField('title', e.target.value)}
-            placeholder="Ex: Sobre a RV Car Solutions"
+            placeholder="Ex: Sobre Nossa Empresa"
           />
         </div>
         <div>

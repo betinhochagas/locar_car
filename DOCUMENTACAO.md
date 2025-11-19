@@ -1,4 +1,4 @@
-# 📚 RV Car Solutions - Documentação Completa
+# 📚 Sistema de Gestão de Locadora - Documentação Completa
 
 > Sistema completo de gestão de locação de veículos com painel administrativo intuitivo
 
@@ -24,7 +24,7 @@
 
 ## 🎯 Sobre o Projeto
 
-**RV Car Solutions** é um sistema web completo para empresas de locação de veículos, especialmente voltado para motoristas de aplicativos (Uber, 99, etc).
+Sistema web completo para empresas de locação de veículos, especialmente voltado para motoristas de aplicativos (Uber, 99, etc).
 
 ### Características Principais
 
@@ -94,8 +94,8 @@ MySQL 8+
 ### Passo 1: Clone o Repositório
 
 ```bash
-git clone https://github.com/betinhochagas/rvcar.git
-cd rv-car-solutions-main
+git clone https://github.com/betinhochagas/locar_car.git
+cd locar_car
 ```
 
 ### Passo 2: Instalar Dependências
@@ -461,7 +461,7 @@ npm install
 npm run build
 
 # Configurar Nginx
-sudo nano /etc/nginx/sites-available/rvcar
+sudo nano /etc/nginx/sites-available/locadora
 
 # Reiniciar serviços
 sudo systemctl restart nginx php8.1-fpm
@@ -473,7 +473,7 @@ sudo systemctl restart nginx php8.1-fpm
 server {
     listen 80;
     server_name seudominio.com;
-    root /var/www/rvcar/dist;
+    root /var/www/locadora/dist;
     index index.html;
 
     location / {
@@ -481,7 +481,7 @@ server {
     }
 
     location /api {
-        alias /var/www/rvcar/api;
+        alias /var/www/locadora/api;
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;
             fastcgi_pass unix:/run/php/php8.1-fpm.sock;
@@ -711,7 +711,7 @@ error_reporting = E_ALL
 ## 📊 Estrutura do Projeto
 
 ```
-rv-car-solutions-main/
+locadora/
 ├── public/              # Arquivos públicos estáticos
 │   ├── hero-bg.jpg
 │   ├── about.jpg
@@ -851,7 +851,7 @@ Para contribuir:
 
 **Problemas técnicos:**
 
-- GitHub Issues: https://github.com/betinhochagas/rvcar/issues
+- GitHub Issues: https://github.com/betinhochagas/locar_car/issues
 
 **Dúvidas sobre uso:**
 

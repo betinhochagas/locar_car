@@ -1,6 +1,6 @@
 # 📚 Índice da Documentação
 
-> Guia rápido para encontrar o que você precisa no projeto RV Car Solutions
+> Guia rápido para encontrar o que você precisa no Sistema de Gestão de Locadora
 
 ---
 
@@ -271,7 +271,7 @@ Novo no projeto? Siga esta ordem:
 [Título H3] Nossos Canais
 [Lista]
   - WhatsApp: (47) 98448-5492
-  - Email: contato@rvcar.com
+  - Email: contato@suaempresa.com
   - Horário: Seg-Sex 8h-18h
 [Botão] Enviar Mensagem
 ```
@@ -417,7 +417,7 @@ Novo no projeto? Siga esta ordem:
 ## 📊 Estrutura Visual
 
 ```
-📚 Documentação RV Car Solutions
+📚 Documentação do Sistema
 │
 ├── 🏠 README.md (Entrada principal)
 │   ├── Quick Start (5 passos)

@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo ====================================
-echo RV Car Solutions - Inicializacao
+echo Sistema de Gestao de Locadora - Inicializacao
 echo Versao Completa com Verificacao
 echo ====================================
 echo.
@@ -106,13 +106,13 @@ echo.
 REM Iniciar Backend PHP com 0.0.0.0 para aceitar rede
 echo [Backend] Iniciando PHP na porta 3000...
 echo           Aguarde...
-start "RV Car - Backend PHP" cmd /k "cd /d "%~dp0" && echo Backend iniciado na porta 3000 && "%PHP_CMD%" -S 0.0.0.0:3000"
+start "Locadora - Backend PHP" cmd /k "cd /d "%~dp0" && echo Backend iniciado na porta 3000 && "%PHP_CMD%" -S 0.0.0.0:3000"
 timeout /t 4 /nobreak >nul
 
 REM Iniciar Frontend React
 echo [Frontend] Iniciando React...
 echo            Aguarde...
-start "RV Car - Frontend React" cmd /k "cd /d "%~dp0" && npm run dev"
+start "Locadora - Frontend React" cmd /k "cd /d "%~dp0" && npm run dev"
 timeout /t 3 /nobreak >nul
 
 echo.

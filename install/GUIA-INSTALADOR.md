@@ -2,7 +2,7 @@
 
 ## 🎯 Sobre o Instalador
 
-O **RV Car Solutions Installer** é um instalador web completo que automatiza toda a configuração do sistema via navegador. Basta fazer upload de um arquivo ZIP e acessar pelo navegador!
+O **Sistema de Locadora Installer** é um instalador web completo que automatiza toda a configuração do sistema via navegador. Basta fazer upload de um arquivo ZIP e acessar pelo navegador!
 
 ---
 
@@ -10,10 +10,10 @@ O **RV Car Solutions Installer** é um instalador web completo que automatiza to
 
 ### **Passo 1: Fazer Upload**
 
-1. **Baixe o arquivo:** `rvcar-installer.zip`
+1. **Baixe o arquivo:** `locadora-installer.zip`
 2. **Acesse seu cPanel:** https://srv41.hinetworks.com.br:2083
 3. **Vá em:** File Manager → `public_html/`
-4. **Faça upload** do arquivo `rvcar-installer.zip`
+4. **Faça upload** do arquivo `locadora-installer.zip`
 5. **Extraia** o arquivo (botão direito → Extract)
 
 ### **Passo 2: Acessar o Instalador**
@@ -41,8 +41,8 @@ O instalador verifica automaticamente:
 Preencha os dados do MySQL:
 
 - **Host:** `localhost` (geralmente)
-- **Nome do Banco:** Ex: `usuario_rvcar_db`
-- **Usuário:** Ex: `usuario_rvcar_user`
+- **Nome do Banco:** Ex: `usuario_locadora_db`
+- **Usuário:** Ex: `usuario_locadora_user`
 - **Senha:** A senha que você criou
 
 **Onde encontrar?** cPanel → MySQL® Databases
@@ -100,7 +100,7 @@ O instalador irá:
 ```
 URL: https://seudominio.com.br/admin/login
 Usuário: admin
-Senha: rvcar2024
+Senha: admin123
 ```
 
 **⚠️ IMPORTANTE:** Altere a senha após o primeiro login!
@@ -346,12 +346,12 @@ O instalador possui uma interface moderna com:
 
 - Veja: `TROUBLESHOOTING.md`
 - Verifique: `DEBUGGING.md`
-- Issues: https://github.com/betinhochagas/rvcar/issues
+- Issues: https://github.com/betinhochagas/locar_car/issues
 
 **Contato:**
 
 - 📱 WhatsApp: (47) 98448-5492
-- 📧 Email: contato@rvcarlocacoes.com.br
+- 📧 Email: contato@suaempresa.com.br
 
 ---
 
@@ -421,5 +421,5 @@ _Apenas 4 cliques para ter seu site funcionando!_
 
 ---
 
-**Desenvolvido com ❤️ para RV Car Solutions**  
+**Sistema profissional de gestão de locadora**  
 _Blumenau - Santa Catarina_

@@ -1,4 +1,4 @@
-# Script de Upload FTP para RV Car
+# Script de Upload FTP para Sistema de Locadora
 # INSTRUÇÕES: Preencha as credenciais FTP abaixo
 
 # ============================================
@@ -8,7 +8,7 @@
 $ftpServer = "ftp.seudominio.com.br"      # Ex: ftp.bnutech.com.br
 $ftpUsername = "seu_usuario_ftp"           # Seu usuário FTP
 $ftpPassword = "sua_senha_ftp"             # Sua senha FTP
-$ftpRemotePath = "/public_html/rvcar/"     # Pasta de destino no servidor
+$ftpRemotePath = "/public_html/locadora/"     # Pasta de destino no servidor
 
 # ============================================
 # NÃO ALTERAR DAQUI PRA BAIXO
@@ -17,7 +17,7 @@ $ftpRemotePath = "/public_html/rvcar/"     # Pasta de destino no servidor
 $localPath = "$PSScriptRoot\dist"
 
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  RV Car - Upload FTP Automático" -ForegroundColor Cyan
+Write-Host "  Sistema de Locadora - Upload FTP Automático" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -105,7 +105,7 @@ try {
     Write-Host "  - 404.html" -ForegroundColor White
     Write-Host "  - assets/ ($($assetsFiles.Count) arquivos)" -ForegroundColor White
     Write-Host ""
-    Write-Host "Teste o site: https://bnutech.com.br/rvcar/" -ForegroundColor Cyan
+    Write-Host "Teste o site: https://seudominio.com.br/" -ForegroundColor Cyan
     Write-Host ""
     
 }

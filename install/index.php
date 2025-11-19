@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RV Car Solutions - Instalador Web Completo
+ * Sistema de Gestão de Locadora - Instalador Web Completo
  * Versão: 2.0.0
  * 
  * Este instalador configura automaticamente:
@@ -45,7 +45,7 @@ if (file_exists($lockFile) && !isset($_GET['force'])) {
         <div class="box">
             <div class="success">✅</div>
             <h1>Instalação já foi concluída!</h1>
-            <p>O RV Car Solutions já está instalado e funcionando.</p>
+            <p>O Sistema de Locadora já está instalado e funcionando.</p>
             <div class="warning">
                 <strong>⚠️ Importante:</strong> Por segurança, delete a pasta <code>/install/</code> do servidor!
             </div>
@@ -221,7 +221,7 @@ function performInstallation()
         $row = $result->fetch_assoc();
 
         if ($row['count'] == 0) {
-            // Inserir admin padrão (senha: rvcar2024)
+            // Inserir admin padrão (senha: admin123)
             $hashedPassword = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
             $stmt = $conn->prepare("INSERT INTO admins (username, password, name) VALUES (?, ?, ?)");
             $username = 'admin';
@@ -263,7 +263,7 @@ function performInstallation()
         // Criar arquivo config.php
         $configContent = "<?php
 /**
- * RV Car Solutions - Configuração do Banco de Dados
+ * Sistema de Gestão de Locadora - Configuração do Banco de Dados
  * Gerado automaticamente pelo instalador em: " . date('d/m/Y H:i:s') . "
  */
 
@@ -361,7 +361,7 @@ function sendError(\$message, \$statusCode = 400)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instalador RV Car Solutions v<?php echo INSTALLER_VERSION; ?></title>
+    <title>Instalador Sistema de Locadora v<?php echo INSTALLER_VERSION; ?></title>
     <style>
         * {
             margin: 0;
@@ -638,7 +638,7 @@ function sendError(\$message, \$statusCode = 400)
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚗 RV Car Solutions</h1>
+            <h1>🚗 Sistema de Gestão de Locadora</h1>
             <p>Instalador Web - Versão <?php echo INSTALLER_VERSION; ?></p>
         </div>
 
@@ -712,8 +712,8 @@ function sendError(\$message, \$statusCode = 400)
                         <ul>
                             <li><strong>cPanel:</strong> Seção "Bancos de Dados MySQL"</li>
                             <li><strong>Host:</strong> Geralmente é "localhost"</li>
-                            <li><strong>Nome do Banco:</strong> Criado no cPanel (ex: usuario_rvcar_db)</li>
-                            <li><strong>Usuário:</strong> Criado no cPanel (ex: usuario_rvcar_user)</li>
+                            <li><strong>Nome do Banco:</strong> Criado no cPanel (ex: usuario_locadora_db)</li>
+                            <li><strong>Usuário:</strong> Criado no cPanel (ex: usuario_locadora_user)</li>
                             <li><strong>Senha:</strong> A senha que você definiu ao criar o usuário</li>
                         </ul>
                     </div>
@@ -734,13 +734,13 @@ function sendError(\$message, \$statusCode = 400)
 
                         <div class="form-group">
                             <label>Nome do Banco de Dados</label>
-                            <input type="text" name="db_name" placeholder="usuario_rvcar_db" required>
+                            <input type="text" name="db_name" placeholder="usuario_locadora_db" required>
                             <small>Nome do banco criado no cPanel</small>
                         </div>
 
                         <div class="form-group">
                             <label>Usuário do Banco</label>
-                            <input type="text" name="db_user" placeholder="usuario_rvcar_user" required>
+                            <input type="text" name="db_user" placeholder="usuario_locadora_user" required>
                             <small>Usuário com permissões no banco</small>
                         </div>
 
@@ -811,7 +811,7 @@ function sendError(\$message, \$statusCode = 400)
                         <div class="success-icon">🎉</div>
                         <h2 style="color: #22c55e; margin-bottom: 15px;">Instalação Concluída!</h2>
                         <p style="font-size: 16px; color: #6c757d; margin-bottom: 30px;">
-                            O RV Car Solutions foi instalado com sucesso!
+                            O Sistema de Locadora foi instalado com sucesso!
                         </p>
                     </div>
 
@@ -830,7 +830,7 @@ function sendError(\$message, \$statusCode = 400)
                         <div class="code-box">
                             URL: <?php echo 'https://' . $_SERVER['HTTP_HOST']; ?>/admin/login<br>
                             Usuário: admin<br>
-                            Senha: rvcar2024
+                            Senha: admin123
                         </div>
                         <p style="margin-top: 10px; color: #dc2626;">
                             <strong>⚠️ IMPORTANTE:</strong> Altere a senha padrão após o primeiro login!
