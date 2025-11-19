@@ -11,11 +11,13 @@ Criei um script que **corrige tudo automaticamente**!
 ### **1️⃣ UPLOAD DO SCRIPT (1 min)**
 
 **Arquivo:**
+
 ```
 D:\website\rv-car-solutions-main\deploy-rvcar\api\diagnostico.php
 ```
 
 **Onde colocar:**
+
 1. cPanel: https://srv41.hinetworks.com.br:2083
 2. File Manager → `public_html/rvcar/api/`
 3. Upload de `diagnostico.php`
@@ -25,11 +27,13 @@ D:\website\rv-car-solutions-main\deploy-rvcar\api\diagnostico.php
 ### **2️⃣ EXECUTAR O SCRIPT (1 min)**
 
 **Acesse no navegador:**
+
 ```
 https://bnutech.com.br/rvcar/api/diagnostico.php
 ```
 
 **O que ele faz:**
+
 - ✅ Testa conexão com banco
 - ✅ Verifica se tabelas existem
 - ✅ **Cria usuário `admin` automaticamente**
@@ -41,15 +45,18 @@ https://bnutech.com.br/rvcar/api/diagnostico.php
 ### **3️⃣ TESTAR LOGIN (30 seg)**
 
 **URL:**
+
 ```
 https://bnutech.com.br/rvcar/admin/login
 ```
 
 **Credenciais:**
+
 - Usuário: `admin`
 - Senha: `rvcar2024`
 
 **Resultado:**
+
 - ✅ Login funciona
 - ✅ Dashboard aparece
 
@@ -58,6 +65,7 @@ https://bnutech.com.br/rvcar/admin/login
 ### **4️⃣ DELETAR SCRIPT (30 seg)**
 
 **IMPORTANTE:** Por segurança, delete:
+
 ```
 /rvcar/api/diagnostico.php
 ```
@@ -67,6 +75,7 @@ https://bnutech.com.br/rvcar/admin/login
 ## 🔍 O QUE O SCRIPT FAZ
 
 ### **Se usuário NÃO existe:**
+
 ```
 ✅ Cria usuário admin
 ✅ Define senha rvcar2024
@@ -74,6 +83,7 @@ https://bnutech.com.br/rvcar/admin/login
 ```
 
 ### **Se usuário JÁ existe:**
+
 ```
 ✅ Atualiza senha para rvcar2024
 ✅ Corrige qualquer problema
@@ -81,6 +91,7 @@ https://bnutech.com.br/rvcar/admin/login
 ```
 
 ### **Se tabelas NÃO existem:**
+
 ```
 ❌ Mostra erro
 📝 Instrui a rodar o instalador primeiro
@@ -91,6 +102,7 @@ https://bnutech.com.br/rvcar/admin/login
 ## 📊 CENÁRIOS
 
 ### ✅ **Cenário 1: Instalador não foi rodado**
+
 ```
 Script mostra: "Tabela admins NÃO existe"
 Ação: Rodar instalador primeiro
@@ -98,6 +110,7 @@ URL: https://bnutech.com.br/rvcar/install/
 ```
 
 ### ✅ **Cenário 2: Instalador foi rodado, mas sem usuário**
+
 ```
 Script mostra: "Nenhum usuário encontrado"
 Ação: Script cria automaticamente ✅
@@ -105,6 +118,7 @@ Resultado: Login funciona!
 ```
 
 ### ✅ **Cenário 3: Usuário existe com senha errada**
+
 ```
 Script mostra: "Senha foi ATUALIZADA"
 Ação: Script corrige automaticamente ✅
@@ -118,6 +132,7 @@ Resultado: Login funciona!
 **401 = Unauthorized = Credenciais inválidas**
 
 Possíveis causas:
+
 1. ❌ Usuário não existe no banco
 2. ❌ Senha está diferente
 3. ❌ Hash da senha corrompido
@@ -130,6 +145,7 @@ O script **recria/atualiza** o usuário com senha correta!
 ## 🎯 GARANTIA
 
 **Este script VAI funcionar porque:**
+
 - ✅ Testa cada passo do processo
 - ✅ Mostra mensagens claras
 - ✅ Cria usuário automaticamente
@@ -141,6 +157,7 @@ O script **recria/atualiza** o usuário com senha correta!
 ## 📝 DETALHES TÉCNICOS
 
 ### **Usuário criado:**
+
 ```sql
 username: admin
 password: $2y$10$... (bcrypt hash de "rvcar2024")
@@ -148,11 +165,13 @@ name: Administrador
 ```
 
 ### **Tabelas verificadas:**
+
 - vehicles
 - admins
 - admin_tokens
 
 ### **Funções testadas:**
+
 - getDBConnection()
 - password_hash()
 - password_verify()
@@ -184,16 +203,19 @@ name: Administrador
 ## 📂 LOCALIZAÇÃO
 
 **No seu PC:**
+
 ```
 D:\website\rv-car-solutions-main\deploy-rvcar\api\diagnostico.php
 ```
 
 **No servidor (upload para):**
+
 ```
 /public_html/rvcar/api/diagnostico.php
 ```
 
 **Executar:**
+
 ```
 https://bnutech.com.br/rvcar/api/diagnostico.php
 ```

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * RV Car - Script de Diagnóstico e Criação de Admin
  * 
@@ -27,10 +28,10 @@ try {
 
     // Verificar tabelas
     echo "<h2>📋 2. Verificação de Tabelas</h2>";
-    
+
     $tables = ['vehicles', 'admins', 'admin_tokens'];
     $missing_tables = [];
-    
+
     foreach ($tables as $table) {
         $stmt = $pdo->query("SHOW TABLES LIKE '$table'");
         if ($stmt->rowCount() > 0) {
@@ -76,11 +77,11 @@ try {
 
     // Criar/atualizar usuário admin
     echo "<h2>🔧 4. Criar/Atualizar Usuário Admin</h2>";
-    
+
     $admin_username = 'admin';
     $admin_password = 'rvcar2024';
     $admin_name = 'Administrador';
-    
+
     // Verificar se admin existe
     $stmt = $pdo->prepare("SELECT id FROM admins WHERE username = ?");
     $stmt->execute([$admin_username]);
@@ -91,7 +92,7 @@ try {
         $hashed = password_hash($admin_password, PASSWORD_DEFAULT);
         $stmt = $pdo->prepare("UPDATE admins SET password = ?, updated_at = NOW() WHERE username = ?");
         $stmt->execute([$hashed, $admin_username]);
-        
+
         echo "<p style='color: blue;'>✓ Usuário <strong>admin</strong> já existia.</p>";
         echo "<p style='color: green;'>✓ Senha foi ATUALIZADA para: <strong>rvcar2024</strong></p>";
     } else {
@@ -102,23 +103,23 @@ try {
             VALUES (?, ?, ?, NOW(), NOW())
         ");
         $stmt->execute([$admin_username, $hashed, $admin_name]);
-        
+
         echo "<p style='color: green;'>✓ Usuário <strong>admin</strong> foi CRIADO com sucesso!</p>";
         echo "<p style='color: green;'>✓ Senha definida: <strong>rvcar2024</strong></p>";
     }
-    
+
     echo "<hr>";
 
     // Testar login
     echo "<h2>🧪 5. Teste de Autenticação</h2>";
-    
+
     $stmt = $pdo->prepare("SELECT id, username, password, name FROM admins WHERE username = ?");
     $stmt->execute([$admin_username]);
     $user = $stmt->fetch();
 
     if ($user) {
         echo "<p style='color: green;'>✓ Usuário encontrado no banco</p>";
-        
+
         // Testar senha
         if (password_verify($admin_password, $user['password'])) {
             echo "<p style='color: green;'>✓ Senha verificada com sucesso!</p>";
@@ -130,7 +131,7 @@ try {
     } else {
         echo "<p style='color: red;'>✗ Usuário não encontrado!</p>";
     }
-    
+
     echo "<hr>";
 
     // Informações finais
@@ -140,12 +141,11 @@ try {
     echo "<p><strong>Usuário:</strong> <code>admin</code></p>";
     echo "<p><strong>Senha:</strong> <code>rvcar2024</code></p>";
     echo "</div>";
-    
+
     echo "<hr>";
     echo "<h2>⚠️ IMPORTANTE: DELETAR ESTE ARQUIVO!</h2>";
     echo "<p style='color: red;'>Por segurança, <strong>DELETE</strong> este arquivo após o teste:</p>";
     echo "<p><code>/rvcar/api/diagnostico.php</code></p>";
-
 } catch (Exception $e) {
     echo "<h2 style='color: red;'>❌ ERRO</h2>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
@@ -159,30 +159,34 @@ try {
 ?>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    max-width: 900px;
-    margin: 50px auto;
-    padding: 20px;
-    background: #f5f5f5;
-}
-h1 {
-    color: #333;
-    border-bottom: 3px solid #4caf50;
-    padding-bottom: 10px;
-}
-h2 {
-    color: #555;
-    margin-top: 30px;
-}
-code {
-    background: #f0f0f0;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
-}
-table {
-    width: 100%;
-    background: white;
-}
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+    }
+
+    h1 {
+        color: #333;
+        border-bottom: 3px solid #4caf50;
+        padding-bottom: 10px;
+    }
+
+    h2 {
+        color: #555;
+        margin-top: 30px;
+    }
+
+    code {
+        background: #f0f0f0;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+    }
+
+    table {
+        width: 100%;
+        background: white;
+    }
 </style>

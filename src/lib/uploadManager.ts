@@ -8,11 +8,24 @@ const getUploadApiUrl = (): string => {
   }
   
   if (import.meta.env.PROD) {
-    return '/rvcar/api/upload.php';
+    return '/api/upload.php';
   }
   
+  // Em desenvolvimento, detectar se está acessando via IP da rede local
   const hostname = window.location.hostname;
-  return `http://${hostname}:3000/api/upload.php`;
+  
+  // Se for localhost ou 127.0.0.1, usar localhost
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3000/api/upload.php';
+  }
+  
+  // Se for IP da rede local (192.168.x.x, 10.x.x.x), usar o mesmo IP
+  if (hostname.match(/^(192\.168\.|10\.)/)) {
+    return `http://${hostname}:3000/api/upload.php`;
+  }
+  
+  // Fallback para localhost
+  return 'http://localhost:3000/api/upload.php';
 };
 
 const UPLOAD_API_URL = getUploadApiUrl();
@@ -25,10 +38,16 @@ interface UploadResponse {
   type: string;
 }
 
+interface UploadOptions {
+  type?: 'vehicle' | 'logo' | 'favicon';
+}
+
 /**
  * Fazer upload de imagem
  */
-export const uploadImage = async (file: File): Promise<string> => {
+export const uploadImage = async (file: File, options: UploadOptions = {}): Promise<string> => {
+  const { type = 'vehicle' } = options;
+  
   // Validar tipo de arquivo
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   if (!allowedTypes.includes(file.type)) {
@@ -44,6 +63,7 @@ export const uploadImage = async (file: File): Promise<string> => {
   // Criar FormData
   const formData = new FormData();
   formData.append('image', file);
+  formData.append('type', type);
 
   // Fazer upload
   const response = await fetch(UPLOAD_API_URL, {

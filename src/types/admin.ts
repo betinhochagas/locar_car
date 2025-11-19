@@ -18,5 +18,5 @@ export interface AdminCredentials {
 
 export const DEFAULT_ADMIN: AdminCredentials = {
   username: 'admin',
-  password: 'rvcar2024' // Change this in production!
+  password: 'admin123' // Change this in production!
 };

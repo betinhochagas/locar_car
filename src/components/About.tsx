@@ -1,17 +1,31 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const About = () => {
+  const { getConfig } = useSiteConfig();
+  const siteName = getConfig('site_name', '');
+  const contactEmail = getConfig('contact_email', '');
+  const contactPhone = getConfig('contact_phone', '');
+  
   return (
     <section id="sobre" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Sobre a <span className="text-primary">RV Car</span>
+              {siteName ? (
+                <>
+                  Sobre a <span className="text-primary">{siteName}</span>
+                </>
+              ) : (
+                <>
+                  Sobre <span className="text-primary">Nós</span>
+                </>
+              )}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Sua parceira de confiança em Blumenau
+              Conheça mais sobre nossa empresa
             </p>
           </div>
 
@@ -56,7 +70,7 @@ const About = () => {
                   <Phone className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2">Contato</h3>
-                <p className="text-sm text-muted-foreground">(47) 98448-5492</p>
+                <p className="text-sm text-muted-foreground">{contactPhone || 'Não informado'}</p>
               </CardContent>
             </Card>
 
@@ -66,7 +80,7 @@ const About = () => {
                   <Mail className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2">E-mail</h3>
-                <p className="text-sm text-muted-foreground">contato@rvcarlocacoes.com.br</p>
+                <p className="text-sm text-muted-foreground">{contactEmail || 'Não informado'}</p>
               </CardContent>
             </Card>
           </div>

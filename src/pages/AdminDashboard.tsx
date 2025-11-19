@@ -35,9 +35,13 @@ import {
 } from '@/lib/vehicleManager';
 import { isAuthenticated, logout, getUser } from '@/lib/authManager';
 import { uploadImage, createImagePreview, validateImage } from '@/lib/uploadManager';
+import { getAbsoluteImageUrl, normalizeVehicleImages } from '@/lib/imageUrlHelper';
 import { toast } from 'sonner';
+import { useSiteConfig } from '@/contexts/SiteConfigContext';
 
 const AdminDashboard = () => {
+  const { getConfig } = useSiteConfig();
+  const siteName = getConfig('site_name', 'Painel Administrativo');
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -67,7 +71,9 @@ const AdminDashboard = () => {
   const loadVehicles = async () => {
     try {
       const loadedVehicles = await getVehicles();
-      setVehicles(loadedVehicles);
+      // Normalizar URLs das imagens para funcionarem via rede local
+      const normalizedVehicles = normalizeVehicleImages(loadedVehicles);
+      setVehicles(normalizedVehicles);
     } catch (error) {
       console.error('Erro ao carregar veículos:', error);
       toast.error('Erro ao carregar veículos');
@@ -102,7 +108,8 @@ const AdminDashboard = () => {
       features: vehicle.features.join(', '),
       available: vehicle.available,
     });
-    setImagePreview(vehicle.image);
+    // Normalizar URL da imagem para preview
+    setImagePreview(getAbsoluteImageUrl(vehicle.image));
     setIsEditDialogOpen(true);
   };
 
@@ -127,8 +134,9 @@ const AdminDashboard = () => {
       const imageUrl = await uploadImage(file);
       setFormData({ ...formData, image: imageUrl });
       toast.success('Imagem enviada com sucesso!');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao enviar imagem');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar imagem';
+      toast.error(errorMessage);
       setImagePreview(null);
     } finally {
       setUploadingImage(false);
@@ -214,11 +222,17 @@ const AdminDashboard = () => {
             <div className="flex items-center space-x-4">
               <Car className="h-8 w-8 text-primary" />
               <div>
-                <h1 className="text-2xl font-bold">RV Car - Admin</h1>
+                <h1 className="text-2xl font-bold">{siteName} - Admin</h1>
                 <p className="text-sm text-muted-foreground">Gerenciamento de Veículos</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <Button variant="outline" onClick={() => navigate('/admin/site-settings')}>
+                Configurações do Site
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/admin/page-sections')}>
+                Gerenciar Seções
+              </Button>
               <Button variant="outline" onClick={() => navigate('/')}>
                 <Home className="h-4 w-4 mr-2" />
                 Site

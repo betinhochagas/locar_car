@@ -8,11 +8,24 @@ const getAuthApiUrl = (): string => {
   }
   
   if (import.meta.env.PROD) {
-    return '/rvcar/api/auth.php';
+    return '/api/auth.php';
   }
   
+  // Em desenvolvimento, detectar se está acessando via IP da rede local
   const hostname = window.location.hostname;
-  return `http://${hostname}:3000/api/auth.php`;
+  
+  // Se for localhost ou 127.0.0.1, usar localhost
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3000/api/auth.php';
+  }
+  
+  // Se for IP da rede local (192.168.x.x, 10.x.x.x), usar o mesmo IP
+  if (hostname.match(/^(192\.168\.|10\.)/)) {
+    return `http://${hostname}:3000/api/auth.php`;
+  }
+  
+  // Fallback para localhost
+  return 'http://localhost:3000/api/auth.php';
 };
 
 const AUTH_API_URL = getAuthApiUrl();
@@ -45,8 +58,8 @@ interface ChangePasswordResponse {
   expires_at: string;
 }
 
-const TOKEN_KEY = 'rvcar_admin_token';
-const USER_KEY = 'rvcar_admin_user';
+const TOKEN_KEY = 'admin_token';
+const USER_KEY = 'admin_user';
 
 /**
  * Realizar login
@@ -132,7 +145,7 @@ export const changePassword = async (
 export const logout = (): void => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
-  localStorage.removeItem('rvcar_admin_auth'); // Remover flag antiga
+  localStorage.removeItem('admin_auth'); // Remover flag antiga
 };
 
 /**
@@ -145,7 +158,13 @@ export const getToken = (): string | null => {
 /**
  * Obter dados do usuário armazenado
  */
-export const getUser = (): any | null => {
+export interface User {
+  username: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
+export const getUser = (): User | null => {
   const userData = localStorage.getItem(USER_KEY);
   return userData ? JSON.parse(userData) : null;
 };

@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import VehicleCard from "./VehicleCard";
 import { Vehicle } from "@/types/admin";
 import { getVehicles } from "@/lib/vehicleManager";
+import { normalizeVehicleImages } from "@/lib/imageUrlHelper";
 
 const VehicleCatalog = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
   useEffect(() => {
-    // Load vehicles from localStorage or Supabase
+    // Carregar veículos da API (servidor)
     const loadVehicles = async () => {
       const loadedVehicles = await getVehicles();
-      setVehicles(loadedVehicles);
+      // Normalizar URLs das imagens para funcionarem via rede local
+      const normalizedVehicles = normalizeVehicleImages(loadedVehicles);
+      setVehicles(normalizedVehicles);
     };
     loadVehicles();
   }, []);

@@ -7,8 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { login } from '@/lib/authManager';
+import { useSiteConfig } from '@/contexts/SiteConfigContext';
 
 const AdminLogin = () => {
+  const { getConfig } = useSiteConfig();
+  const siteName = getConfig('site_name', 'Sistema Admin');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,8 +25,9 @@ const AdminLogin = () => {
       await login(username, password);
       toast.success('Login realizado com sucesso!');
       navigate('/admin/dashboard');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao fazer login');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer login';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -34,7 +38,7 @@ const AdminLogin = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            RV Car - Admin
+            {siteName} - Admin
           </CardTitle>
           <p className="text-center text-muted-foreground">
             Painel Administrativo
@@ -93,7 +97,7 @@ const AdminLogin = () => {
           <div className="mt-6 p-4 bg-secondary rounded-md">
             <p className="text-xs text-muted-foreground text-center">
               <strong>Credenciais padrão:</strong><br />
-              Usuário: admin | Senha: rvcar2024
+              Usuário: admin | Senha: admin123
             </p>
           </div>
         </CardContent>

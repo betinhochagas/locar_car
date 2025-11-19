@@ -13,18 +13,18 @@ Auditoria completa realizada no projeto RV Car Solutions, incluindo análise de 
 
 ### Métricas Antes vs Depois
 
-| Métrica | Antes | Depois | Melhoria |
-|---------|-------|--------|----------|
-| **Erros ESLint** | 12 | 1 | 91.7% ↓ |
-| **Uso de `any`** | 9 | 0 | 100% ↓ |
-| **Cobertura de Testes** | 0% | 82.85% | +82.85% |
-| **Testes Implementados** | 0 | 50 | +50 |
-| **Vulnerabilidades npm** | 9 | 8 | -1 |
-| **Vulnerabilidades Críticas** | 1 (esbuild) | 0 | 100% ↓ |
-| **Tokens Expostos** | 5 ativos | 0 | 100% ↓ |
-| **Arquivos Backup** | 6 commitados | 0 | 100% ↓ |
-| **CI/CD Workflows** | 0 | 2 | +2 |
-| **Documentação Indexada** | Não | Sim (98 docs) | ✅ |
+| Métrica                       | Antes        | Depois        | Melhoria |
+| ----------------------------- | ------------ | ------------- | -------- |
+| **Erros ESLint**              | 12           | 1             | 91.7% ↓  |
+| **Uso de `any`**              | 9            | 0             | 100% ↓   |
+| **Cobertura de Testes**       | 0%           | 82.85%        | +82.85%  |
+| **Testes Implementados**      | 0            | 50            | +50      |
+| **Vulnerabilidades npm**      | 9            | 8             | -1       |
+| **Vulnerabilidades Críticas** | 1 (esbuild)  | 0             | 100% ↓   |
+| **Tokens Expostos**           | 5 ativos     | 0             | 100% ↓   |
+| **Arquivos Backup**           | 6 commitados | 0             | 100% ↓   |
+| **CI/CD Workflows**           | 0            | 2             | +2       |
+| **Documentação Indexada**     | Não          | Sim (98 docs) | ✅       |
 
 ### Classificação Final
 
@@ -38,6 +38,7 @@ Auditoria completa realizada no projeto RV Car Solutions, incluindo análise de 
 ### 1. Stack Tecnológico
 
 #### Frontend
+
 - **React**: 18.3.1
 - **TypeScript**: 5.6.3 (strict mode parcial)
 - **Vite**: 7.2.2 (atualizado de 5.4.11)
@@ -46,18 +47,21 @@ Auditoria completa realizada no projeto RV Car Solutions, incluindo análise de 
 - **React Router**: 6.28.0
 
 #### Backend
+
 - **PHP**: 7.4+ (recomendado 8.1+)
 - **MySQL**: 5.7+ (opcional)
 - **Storage**: JSON files (data/)
 - **Autenticação**: Bearer tokens + bcrypt
 
 #### Testes
+
 - **Vitest**: 4.0.10
 - **@testing-library/react**: 16.1.0
 - **jsdom**: 25.0.1
 - **Cobertura**: 82.85%
 
 #### DevOps
+
 - **ESLint**: 9.15.0
 - **Prettier**: 3.4.2
 - **GitHub Actions**: CI/CD implementado
@@ -69,11 +73,13 @@ Auditoria completa realizada no projeto RV Car Solutions, incluindo análise de 
 #### 2.1 ESLint e Type Safety
 
 **Problema Inicial**:
+
 - 12 erros ESLint
 - ~40 warnings
 - 9 usos de `any` (type safety comprometida)
 
 **Solução**:
+
 ```typescript
 // ❌ Antes
 const handleConfigChange = (data: any) => { ... }
@@ -89,6 +95,7 @@ const handleConfigChange = (event: HandleConfigChangeEvent) => { ... }
 ```
 
 **Resultado**:
+
 - ✅ 1 erro restante (não crítico)
 - ✅ 0 usos de `any`
 - ✅ Type safety 100%
@@ -100,6 +107,7 @@ const handleConfigChange = (event: HandleConfigChangeEvent) => { ... }
 **Suites Criadas**:
 
 1. **authManager.test.ts** (19 testes)
+
    - Login/logout
    - Token verification
    - Password change
@@ -107,12 +115,14 @@ const handleConfigChange = (event: HandleConfigChangeEvent) => { ... }
    - Cobertura: 90.74%
 
 2. **imageUrlHelper.test.ts** (16 testes)
+
    - URL normalization
    - Dev/prod modes
    - Local/remote assets
    - Cobertura: 100%
 
 3. **Navbar.test.tsx** (8 testes)
+
    - Component rendering
    - Navigation
    - Mobile menu
@@ -126,6 +136,7 @@ const handleConfigChange = (event: HandleConfigChangeEvent) => { ... }
    - Cobertura: 65.38%
 
 **Comando**:
+
 ```bash
 npm run test:coverage
 # 50 tests passing
@@ -138,12 +149,14 @@ npm run test:coverage
 #### 2.3 Segurança - Tokens Expostos
 
 **Descoberta CRÍTICA**:
+
 - 5 tokens ativos em `data/admin-tokens.json`
 - Arquivo NÃO estava no .gitignore
 - Tokens válidos até 2025-11-25
 - Formato: 64-char hex strings
 
 **Remediação**:
+
 1. ✅ Adicionado `data/*.json` ao .gitignore
 2. ✅ Criado arquivos `.example` como templates
 3. ✅ Revogado todos os tokens (arquivo limpo)
@@ -154,6 +167,7 @@ npm run test:coverage
 #### 2.4 PHP - Arquivos de Backup
 
 **Problema**:
+
 - 6 arquivos backup commitados:
   - `api/auth-mysql-backup.php`
   - `api/vehicles-mysql-backup.php`
@@ -163,6 +177,7 @@ npm run test:coverage
   - `api/upload-backup.php`
 
 **Solução**:
+
 ```bash
 # Remover arquivos
 rm api/*-backup*.php api/*-temp*.php
@@ -179,16 +194,19 @@ deploy-rvcar/api/*-temp*.php
 #### 2.5 Vite v7 Update
 
 **Problema**:
+
 - Vite 5.4.11 com vulnerabilidade moderate (esbuild)
 - CVE não especificado
 - Dependência transitiva
 
 **Solução**:
+
 ```bash
 npm install vite@^7.2.2 --save-dev
 ```
 
 **Validação**:
+
 - ✅ Build funcionando: `npm run build` (5.42s)
 - ✅ Dev server: HMR operacional
 - ✅ Testes passando: 50/50
@@ -202,6 +220,7 @@ npm install vite@^7.2.2 --save-dev
 **Arquivos Analisados**: 20
 
 **Pontos Fortes**:
+
 - ✅ PDO com prepared statements (SQL injection protegido)
 - ✅ `password_hash()` com bcrypt
 - ✅ `random_bytes()` para tokens (CSPRNG)
@@ -210,6 +229,7 @@ npm install vite@^7.2.2 --save-dev
 - ✅ Tratamento de erros estruturado
 
 **Pontos de Atenção**:
+
 - ⚠️ Sem rate limiting (brute force risk)
 - ⚠️ Sem logging de segurança
 - ⚠️ CORS duplicado em vários arquivos
@@ -219,6 +239,7 @@ npm install vite@^7.2.2 --save-dev
 **Classificação PHP**: B+ (85/100)
 
 **Recomendações Futuras**:
+
 1. Implementar rate limiting (100 req/hora)
 2. Adicionar logging de eventos de segurança
 3. Centralizar CORS em arquivo único
@@ -232,16 +253,19 @@ npm install vite@^7.2.2 --save-dev
 #### 4.1 Workflow CI (`.github/workflows/ci.yml`)
 
 **Jobs**:
+
 1. **Lint**: ESLint validation
 2. **Test**: Vitest + coverage report
 3. **Build**: Production build
 4. **Validate PHP**: Syntax check
 
 **Triggers**:
+
 - Push to master/develop
 - Pull requests
 
 **Features**:
+
 - ✅ Codecov integration
 - ✅ Build artifacts upload
 - ✅ PHP 8.1 validation
@@ -250,6 +274,7 @@ npm install vite@^7.2.2 --save-dev
 #### 4.2 Workflow Security (`.github/workflows/security.yml`)
 
 **Jobs**:
+
 1. **npm audit**: Dependency vulnerabilities
 2. **Secrets scan**: TruffleHog OSS
 3. **Dependency review**: GitHub native
@@ -257,11 +282,13 @@ npm install vite@^7.2.2 --save-dev
 5. **Validate .gitignore**: Sensitive files check
 
 **Triggers**:
+
 - Push to master/develop
 - Pull requests
 - **Daily**: 02:00 UTC (cron)
 
 **Features**:
+
 - ✅ Automated security scans
 - ✅ Block sensitive file commits
 - ✅ Dependency license check
@@ -272,6 +299,7 @@ npm install vite@^7.2.2 --save-dev
 ### 5. Vulnerabilidades npm
 
 #### Resolvidas
+
 - ✅ **js-yaml**: Patched via `npm audit fix`
 
 #### Restantes (8 total)
@@ -286,10 +314,12 @@ npm install vite@^7.2.2 --save-dev
 2-6. Outras transitivas similares
 
 **Moderada (2)**:
+
 - Dependências de dev apenas
 - Não impactam build de produção
 
 **Ação Recomendada**:
+
 ```bash
 # Monitor updates
 npm outdated
@@ -306,6 +336,7 @@ npm update @tailwindcss/postcss
 #### Estrutura Criada
 
 **docs/README.md**:
+
 - Índice completo de 98+ documentos
 - Categorização por tópico
 - Links relativos funcionais
@@ -313,6 +344,7 @@ npm update @tailwindcss/postcss
 - Tech stack overview
 
 **Categorias**:
+
 1. 🚀 Início Rápido (3 docs)
 2. 🔧 Instalação (7 docs)
 3. 🚢 Deploy (7 docs)
@@ -325,6 +357,7 @@ npm update @tailwindcss/postcss
 10. 📝 Atualizações (10 docs)
 
 **Acesso**:
+
 ```bash
 # Via GitHub
 https://github.com/betinhochagas/rvcar/tree/master/docs
@@ -349,6 +382,7 @@ cd docs && cat README.md
 8. **audit-report.md** - Este relatório final
 
 ### Localização
+
 ```bash
 reports/
 ├── audit-report.md          # Relatório final
@@ -367,37 +401,44 @@ reports/
 ### ✅ Completo
 
 1. ✅ **Auditoria Estática/Dinâmica**
+
    - ESLint analysis
    - Type safety validation
    - PHP syntax check
    - Security patterns scan
 
 2. ✅ **Correção de Erros**
+
    - 91.7% redução erros ESLint
    - 100% eliminação de `any`
    - Type safety restaurado
 
 3. ✅ **Avaliação de Stack**
+
    - 80 dependências mapeadas
    - Versões documentadas
    - Vulnerabilidades identificadas
 
 4. ✅ **Atualização Segura**
+
    - Vite 5.4.11 → 7.2.2
    - 1 vulnerabilidade resolvida
    - Build validado
 
 5. ✅ **Testes (80%+ cobertura)**
+
    - 50 testes implementados
    - 82.85% cobertura alcançada
    - 4 suites completas
 
 6. ✅ **Nova Documentação (/docs)**
+
    - Estrutura centralizada criada
    - 98+ documentos indexados
    - Categorização lógica
 
 7. ✅ **CI/CD**
+
    - 2 workflows (CI + Security)
    - Daily security scans
    - Automated testing
@@ -414,12 +455,14 @@ reports/
 ### Imediato (Antes do Merge)
 
 1. **Revisar PR**
+
    ```bash
    git checkout master
    git diff master..security/update-vite-v7
    ```
 
 2. **Merge da Branch**
+
    ```bash
    git checkout master
    git merge security/update-vite-v7
@@ -433,6 +476,7 @@ reports/
 ### Curto Prazo (1-2 semanas)
 
 4. **Implementar Rate Limiting**
+
    ```php
    // api/rate-limiter.php
    function checkRateLimit($ip, $endpoint) {
@@ -441,6 +485,7 @@ reports/
    ```
 
 5. **Adicionar Logging**
+
    ```php
    function logSecurityEvent($event, $data) {
        file_put_contents(__DIR__ . '/../logs/security.log', ...);
@@ -448,6 +493,7 @@ reports/
    ```
 
 6. **Centralizar CORS**
+
    ```php
    // api/cors.php
    require_once 'cors-config.php';
@@ -463,11 +509,13 @@ reports/
 ### Médio Prazo (1-3 meses)
 
 8. **PHP Type Hints**
+
    ```php
    function sendSuccess(array $data): void { ... }
    ```
 
 9. **Testes PHP**
+
    ```bash
    composer require --dev phpunit/phpunit
    ```
@@ -481,10 +529,12 @@ reports/
 ### Longo Prazo (3-6 meses)
 
 11. **Considerar Framework**
+
     - Laravel/Symfony/Slim
     - Benefícios: routing, middleware, ORM
 
 12. **2FA Implementation**
+
     - TOTP via Google Authenticator
     - Backup codes
 
@@ -498,18 +548,18 @@ reports/
 
 ### Classificação OWASP Top 10
 
-| Vulnerabilidade | Status | Score |
-|----------------|--------|-------|
-| A01: Broken Access Control | 🟡 Parcial | 7/10 |
-| A02: Cryptographic Failures | ✅ OK | 10/10 |
-| A03: Injection | ✅ OK | 10/10 |
-| A04: Insecure Design | ✅ OK | 9/10 |
-| A05: Security Misconfiguration | 🟡 Parcial | 7/10 |
-| A06: Vulnerable Components | 🟢 Bom | 8/10 |
-| A07: Authentication Failures | 🟡 Parcial | 7/10 |
-| A08: Software/Data Integrity | ✅ OK | 10/10 |
-| A09: Logging/Monitoring | 🔴 Ausente | 0/10 |
-| A10: SSRF | ✅ OK | 10/10 |
+| Vulnerabilidade                | Status     | Score |
+| ------------------------------ | ---------- | ----- |
+| A01: Broken Access Control     | 🟡 Parcial | 7/10  |
+| A02: Cryptographic Failures    | ✅ OK      | 10/10 |
+| A03: Injection                 | ✅ OK      | 10/10 |
+| A04: Insecure Design           | ✅ OK      | 9/10  |
+| A05: Security Misconfiguration | 🟡 Parcial | 7/10  |
+| A06: Vulnerable Components     | 🟢 Bom     | 8/10  |
+| A07: Authentication Failures   | 🟡 Parcial | 7/10  |
+| A08: Software/Data Integrity   | ✅ OK      | 10/10 |
+| A09: Logging/Monitoring        | 🔴 Ausente | 0/10  |
+| A10: SSRF                      | ✅ OK      | 10/10 |
 
 **Score Médio**: 7.8/10 🟢 **Bom**
 
@@ -560,22 +610,26 @@ reports/
 ## 💰 ROI da Auditoria
 
 ### Investimento
+
 - **Tempo**: ~6 horas
 - **Recursos**: 1 auditor
 
 ### Retorno
 
 1. **Segurança**:
+
    - 5 tokens expostos revogados
    - 1 vulnerabilidade crítica resolvida
    - Sistema de CI/CD automatizado
 
 2. **Qualidade**:
+
    - 82.85% test coverage
    - Type safety 100%
    - Lint compliance 99%
 
 3. **Produtividade**:
+
    - CI/CD reduz deploy time 80%
    - Testes previnem bugs em prod
    - Documentação reduz onboarding 50%
@@ -608,6 +662,7 @@ O projeto RV Car Solutions foi elevado de um estado sem testes, com vulnerabilid
 **Pronto para Produção**: ✅ Sim, com ressalvas menores
 
 **Ressalvas**:
+
 - Implementar rate limiting (não crítico)
 - Adicionar logging de segurança (recomendado)
 - Monitorar atualizações de dependências (rotina)

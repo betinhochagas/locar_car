@@ -108,3 +108,7 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
+// TODO: Migrate to ES module import after verifying compatibility
+// import tailwindcssAnimate from "tailwindcss-animate";
+// plugins: [tailwindcssAnimate],

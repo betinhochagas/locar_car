@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import ConsultantModal from "./ConsultantModal";
 
 const WhatsAppButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isClosed, setIsClosed] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { getConfig } = useSiteConfig();
+  
+  // Configurações dinâmicas
+  const buttonText = getConfig('button_whatsapp_text', '');
 
   useEffect(() => {
     // Verifica se o usuário já fechou o botão anteriormente (sessão)
@@ -34,8 +39,8 @@ const WhatsAppButton = () => {
     sessionStorage.setItem("whatsappButtonClosed", "true");
   };
 
-  // Não renderiza se foi fechado ou ainda não está visível
-  if (isClosed || !isVisible) {
+  // Não renderiza se foi fechado, ainda não está visível, ou não tem texto configurado
+  if (isClosed || !isVisible || !buttonText) {
     return null;
   }
 
@@ -56,7 +61,7 @@ const WhatsAppButton = () => {
           {/* Texto */}
           <div className="flex flex-col items-start">
             <span className="font-semibold text-sm whitespace-nowrap">
-              Fale com um consultor
+              {buttonText}
             </span>
             <span className="text-xs text-white/90">
               Estamos online!
@@ -67,13 +72,20 @@ const WhatsAppButton = () => {
           <span className="absolute top-2 right-14 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
 
           {/* Botão de fechar */}
-          <button
+          <div
             onClick={handleClose}
-            className="absolute top-2 right-2 w-6 h-6 bg-black/20 hover:bg-black/40 rounded-full flex items-center justify-center transition-colors"
+            className="absolute top-2 right-2 w-6 h-6 bg-black/20 hover:bg-black/40 rounded-full flex items-center justify-center transition-colors cursor-pointer"
+            role="button"
             aria-label="Fechar"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleClose(e as React.KeyboardEvent<HTMLDivElement>);
+              }
+            }}
           >
             <X className="h-4 w-4" />
-          </button>
+          </div>
         </button>
       </div>
 

@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import heroBg from "@/assets/hero-bg.jpg";
 import ConsultantModal from "./ConsultantModal";
 
 const Hero = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { getConfig } = useSiteConfig();
+  
+  // Configurações dinâmicas
+  const siteName = getConfig('site_name', '');
+  const buttonCtaText = getConfig('button_cta_text', '');
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-16">
@@ -13,7 +19,7 @@ const Hero = () => {
       <div className="absolute inset-0 z-0">
         <img
           src={heroBg}
-          alt="RV Car - Locação de Veículos"
+          alt={`${siteName} - Locação de Veículos`}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/70 to-dark/50" />
@@ -37,14 +43,16 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button
-              size="lg"
-              onClick={() => setIsModalOpen(true)}
-              className="text-base sm:text-lg group"
-            >
-              Fale com um consultor
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            {buttonCtaText && (
+              <Button
+                size="lg"
+                onClick={() => setIsModalOpen(true)}
+                className="text-base sm:text-lg group"
+              >
+                {buttonCtaText}
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            )}
             <Button
               size="lg"
               variant="outline"
