@@ -7,6 +7,7 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   // Base path - change to '/your-subfolder/' if deploying to subdirectory
   base: '/',
+  publicDir: 'public',
   server: {
     host: "::",
     port: 8080,

@@ -4,7 +4,7 @@
 
 /**
  * Converte uma URL de imagem relativa para absoluta
- * Em desenvolvimento, usa o servidor PHP (porta 3000)
+ * Em desenvolvimento com Vite, usa URL relativa (Vite faz proxy)
  * Em produção, usa URL relativa do mesmo domínio
  */
 export function getAbsoluteImageUrl(relativePath: string): string {
@@ -26,26 +26,9 @@ export function getAbsoluteImageUrl(relativePath: string): string {
   // Se não começar com /, adicionar
   const path = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
 
-  // Em produção, usar URL relativa
-  if (import.meta.env.PROD) {
-    return path;
-  }
-
-  // Em desenvolvimento, detectar o tipo de acesso
-  const hostname = window.location.hostname;
-
-  // Se acessar via localhost, usar localhost para imagens
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return `http://localhost:3000${path}`;
-  }
-
-  // Se acessar via IP da rede local, usar o mesmo IP
-  if (hostname.match(/^(192\.168\.|10\.)/)) {
-    return `http://${hostname}:3000${path}`;
-  }
-
-  // Fallback: localhost
-  return `http://localhost:3000${path}`;
+  // Em desenvolvimento ou produção, usar URL relativa
+  // O Vite tem proxy configurado para /uploads -> localhost:3000
+  return path;
 }
 
 /**

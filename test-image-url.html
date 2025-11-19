@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste de Imagens</title>
+</head>
+<body>
+    <h1>Teste de Carregamento de Imagens</h1>
+    
+    <h2>Teste 1: URL Relativa</h2>
+    <img src="/uploads/vehicles/vehicle_691b913a42e589.99503069.png" alt="Teste 1" width="300" onerror="console.error('Erro no teste 1:', this.src)">
+    
+    <h2>Teste 2: URL Absoluta (localhost:3000)</h2>
+    <img src="http://localhost:3000/uploads/vehicles/vehicle_691b913a42e589.99503069.png" alt="Teste 2" width="300" onerror="console.error('Erro no teste 2:', this.src)">
+    
+    <h2>Teste 3: Via API</h2>
+    <img id="apiImage" width="300" alt="Teste 3">
+    
+    <h2>Teste 4: Info dos Veículos</h2>
+    <pre id="vehicleData"></pre>
+    
+    <script>
+        // Teste via fetch
+        fetch('http://localhost:3000/api/vehicles.php')
+            .then(r => r.json())
+            .then(data => {
+                console.log('Dados dos veículos:', data);
+                document.getElementById('vehicleData').textContent = JSON.stringify(data, null, 2);
+                
+                if (data && data[0] && data[0].image) {
+                    const imageUrl = data[0].image;
+                    console.log('URL da imagem no JSON:', imageUrl);
+                    
+                    // Testar a URL
+                    const fullUrl = imageUrl.startsWith('http') 
+                        ? imageUrl 
+                        : `http://localhost:3000${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+                    
+                    console.log('URL completa:', fullUrl);
+                    document.getElementById('apiImage').src = fullUrl;
+                }
+            })
+            .catch(err => console.error('Erro ao carregar veículos:', err));
+    </script>
+</body>
+</html>
