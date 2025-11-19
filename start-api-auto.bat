@@ -57,7 +57,10 @@ echo ====================================
 echo Iniciando Servidor PHP Backend
 echo ====================================
 echo.
-echo API estara disponivel em: http://localhost:3000
+echo API estara disponivel em:
+echo   - Local: http://localhost:3000
+echo   - Rede:  Use o IP da sua maquina + :3000
+echo.
 echo Instalador DB: http://localhost:3000/api/install.php
 echo Teste API: http://localhost:3000/api/vehicles.php
 echo.
@@ -68,7 +71,7 @@ echo.
 cd /d "%~dp0"
 
 if defined PHP_PATH (
-    "%PHP_PATH%" -S localhost:3000
+    "%PHP_PATH%" -S 0.0.0.0:3000
 ) else (
-    php -S localhost:3000
+    php -S 0.0.0.0:3000
 )

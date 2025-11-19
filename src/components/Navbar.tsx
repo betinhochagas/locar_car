@@ -1,11 +1,24 @@
 import { useState, useCallback, useEffect } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logoImg from "@/assets/logo.jpg";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
+import { getAbsoluteImageUrl } from "@/lib/imageUrlHelper";
+import logoImg from "@/assets/logo.svg";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const { getConfig } = useSiteConfig();
+  
+  // Configurações dinâmicas
+  const siteName = getConfig('site_name', '');
+  const siteTagline = getConfig('site_tagline', '');
+  const siteLogoRaw = getConfig('site_logo', '');
+  // Se não houver logo configurado, usar logo padrão; senão, normalizar URL
+  const siteLogo = !siteLogoRaw ? logoImg : getAbsoluteImageUrl(siteLogoRaw);
+  const siteLogoAlt = getConfig('site_logo_alt', '');
+  const contactPhone = getConfig('contact_phone', '');
+  const contactWhatsapp = getConfig('contact_whatsapp', '');
 
   const menuItems = [
     { label: "Início", href: "#home", id: "home" },
@@ -29,8 +42,8 @@ const Navbar = () => {
   }, []);
 
   const handleWhatsApp = useCallback(() => {
-    window.open("https://wa.me/5547984485492", "_blank");
-  }, []);
+    window.open(`https://wa.me/${contactWhatsapp}`, "_blank");
+  }, [contactWhatsapp]);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -73,21 +86,25 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between py-3">
           <button 
             onClick={() => scrollToSection("#home")}
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             aria-label="Ir para o início"
           >
             <img
-              src={logoImg}
-              alt="RV Car Logo"
-              className="h-10 w-auto rounded-md"
+              src={siteLogo}
+              alt={siteLogoAlt}
+              className="h-16 md:h-20 w-auto rounded-lg shadow-sm p-1 bg-white/50"
             />
-            <div className="hidden sm:block">
-              <span className="font-bold text-lg text-foreground">RV Car</span>
-              <p className="text-xs text-muted-foreground -mt-1">Locações e Investimentos</p>
-            </div>
+            {siteLogoAlt && (
+              <div className="hidden sm:block">
+                <span className="font-bold text-lg text-foreground">{siteLogoAlt}</span>
+                {siteTagline && (
+                  <p className="text-xs text-muted-foreground -mt-1">{siteTagline}</p>
+                )}
+              </div>
+            )}
           </button>
 
           {/* Desktop Menu */}
@@ -107,15 +124,17 @@ const Navbar = () => {
               </button>
             ))}
             <div className="flex items-center space-x-2 ml-4">
-              <Button 
-                onClick={handleWhatsApp} 
-                size="sm" 
-                variant="outline"
-                className="hidden lg:flex items-center space-x-1"
-              >
-                <Phone className="h-4 w-4" />
-                <span>(47) 98448-5492</span>
-              </Button>
+              {contactPhone && contactWhatsapp && (
+                <Button 
+                  onClick={handleWhatsApp} 
+                  size="sm" 
+                  variant="outline"
+                  className="hidden lg:flex items-center space-x-1"
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>{contactPhone}</span>
+                </Button>
+              )}
               <Button onClick={() => scrollToSection("#contato")} size="sm">
                 Fale Conosco
               </Button>
@@ -130,7 +149,7 @@ const Navbar = () => {
             }}
             className="md:hidden p-2 hover:bg-secondary rounded-md transition-colors"
             aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
-            aria-expanded={isOpen ? "true" : "false"}
+            aria-expanded={isOpen}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -166,14 +185,16 @@ const Navbar = () => {
             ))}
             
             <div className="pt-4 space-y-2">
-              <Button 
-                onClick={handleWhatsApp} 
-                variant="outline" 
-                className="w-full flex items-center justify-center space-x-2"
-              >
-                <Phone className="h-4 w-4" />
-                <span>(47) 98448-5492</span>
-              </Button>
+              {contactPhone && contactWhatsapp && (
+                <Button 
+                  onClick={handleWhatsApp} 
+                  variant="outline" 
+                  className="w-full flex items-center justify-center space-x-2"
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>{contactPhone}</span>
+                </Button>
+              )}
               
               <Button 
                 onClick={() => scrollToSection("#contato")} 

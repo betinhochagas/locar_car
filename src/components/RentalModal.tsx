@@ -16,10 +16,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MessageCircle, Loader2 } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.svg";
 import { getVehicles } from "@/lib/vehicleManager";
 import { Vehicle } from "@/types/admin";
 import { useToast } from "@/hooks/use-toast";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 interface RentalModalProps {
   open: boolean;
@@ -27,6 +28,8 @@ interface RentalModalProps {
 }
 
 const RentalModal = ({ open, onOpenChange }: RentalModalProps) => {
+  const { getConfig } = useSiteConfig();
+  const siteName = getConfig('site_name', 'Sistema');
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -91,14 +94,14 @@ const RentalModal = ({ open, onOpenChange }: RentalModalProps) => {
     const vehicleName = selectedVehicle?.name || formData.vehicle;
 
     // Montar mensagem para WhatsApp
-    const message = `🚗 *Solicitação de Aluguel - RV Car*
+    const message = `🚗 *Solicitação de Aluguel - ${siteName}*
 
 👤 *Nome:* ${formData.name}
 📱 *Telefone:* ${formData.phone}
 📧 *E-mail:* ${formData.email}
 🚙 *Veículo Desejado:* ${vehicleName}
 
-_Mensagem enviada através do site RV Car_`;
+_Mensagem enviada através do site ${siteName}_`;
 
     // Codificar mensagem para URL
     const encodedMessage = encodeURIComponent(message);
@@ -126,7 +129,7 @@ _Mensagem enviada através do site RV Car_`;
         {/* Cabeçalho Fixo */}
         <DialogHeader className="sticky top-0 bg-background z-10 pb-4 border-b">
           <div className="flex items-center justify-center mb-2">
-            <img src={logo} alt="RV Car" className="h-12 w-auto" />
+            <img src={logo} alt={siteName} className="h-12 w-auto" />
           </div>
           <DialogTitle className="text-center text-xl">
             Aluguel de Veículos

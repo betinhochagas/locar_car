@@ -5,20 +5,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { toast } from "sonner";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const Contact = () => {
+  const { getConfig } = useSiteConfig();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     message: "",
   });
+  
+  // Configurações dinâmicas
+  const contactPhone = getConfig('contact_phone', '');
+  const contactWhatsapp = getConfig('contact_whatsapp', '');
+  const contactEmail = getConfig('contact_email', '');
+  const contactAddress = getConfig('contact_address', '');
+  const contactHours = getConfig('contact_hours', '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     const message = `Nome: ${formData.name}%0AEmail: ${formData.email}%0ATelefone: ${formData.phone}%0AMensagem: ${formData.message}`;
-    window.open(`https://wa.me/5547984485492?text=${message}`, "_blank");
+    window.open(`https://wa.me/${contactWhatsapp}?text=${message}`, "_blank");
     
     toast.success("Redirecionando para o WhatsApp...");
     setFormData({ name: "", email: "", phone: "", message: "" });
@@ -86,55 +95,61 @@ const Contact = () => {
           </div>
 
           <div className="space-y-6 animate-fade-in">
-            <Card className="border-border">
-              <CardContent className="p-6 flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <MapPin className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Localização</h3>
-                  <p className="text-muted-foreground">Blumenau - Santa Catarina</p>
-                </div>
-              </CardContent>
-            </Card>
+            {contactAddress && (
+              <Card className="border-border">
+                <CardContent className="p-6 flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Localização</h3>
+                    <p className="text-muted-foreground">{contactAddress}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-            <Card className="border-border">
-              <CardContent className="p-6 flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Telefone</h3>
-                  <p className="text-muted-foreground">(47) 98448-5492</p>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-primary"
-                    onClick={() => window.open("https://wa.me/5547984485492", "_blank")}
-                  >
-                    Chamar no WhatsApp
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            {contactPhone && contactWhatsapp && (
+              <Card className="border-border">
+                <CardContent className="p-6 flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Phone className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Telefone</h3>
+                    <p className="text-muted-foreground">{contactPhone}</p>
+                    <Button
+                      variant="link"
+                      className="p-0 h-auto text-primary"
+                      onClick={() => window.open(`https://wa.me/${contactWhatsapp}`, "_blank")}
+                    >
+                      Chamar no WhatsApp
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-            <Card className="border-border">
-              <CardContent className="p-6 flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">E-mail</h3>
-                  <p className="text-muted-foreground">contato@rvcarlocacoes.com.br</p>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-primary"
-                    onClick={() => window.location.href = "mailto:contato@rvcarlocacoes.com.br"}
-                  >
-                    Enviar E-mail
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            {contactEmail && (
+              <Card className="border-border">
+                <CardContent className="p-6 flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Mail className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">E-mail</h3>
+                    <p className="text-muted-foreground">{contactEmail}</p>
+                    <Button
+                      variant="link"
+                      className="p-0 h-auto text-primary"
+                      onClick={() => window.location.href = `mailto:${contactEmail}`}
+                    >
+                      Enviar E-mail
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

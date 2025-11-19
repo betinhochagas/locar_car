@@ -1,8 +1,23 @@
 import { MapPin, Phone, Mail } from "lucide-react";
-import logoImg from "@/assets/logo.jpg";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
+import { getAbsoluteImageUrl } from "@/lib/imageUrlHelper";
+import logoImg from "@/assets/logo.svg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { getConfig } = useSiteConfig();
+  
+  // Configurações dinâmicas
+  const siteName = getConfig('site_name', '');
+  const siteLogoRaw = getConfig('site_logo', '');
+  // Se não houver logo configurado, usar logo padrão; senão, normalizar URL
+  const siteLogo = !siteLogoRaw ? logoImg : getAbsoluteImageUrl(siteLogoRaw);
+  const siteLogoAlt = getConfig('site_logo_alt', '');
+  const siteDescription = getConfig('site_description', '');
+  const contactPhone = getConfig('contact_phone', '');
+  const contactWhatsapp = getConfig('contact_whatsapp', '');
+  const contactEmail = getConfig('contact_email', '');
+  const contactAddress = getConfig('contact_address', '');
 
   return (
     <footer className="bg-dark text-dark-foreground py-12">
@@ -11,15 +26,19 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-3 mb-4">
               <img
-                src={logoImg}
-                alt="RV Car Logo"
-                className="h-10 w-auto"
+                src={siteLogo}
+                alt={siteLogoAlt}
+                className="h-20 w-auto"
               />
-              <span className="font-bold text-lg">RV Car Locações</span>
+              {siteLogoAlt && (
+                <span className="font-bold text-lg">{siteLogoAlt}</span>
+              )}
             </div>
-            <p className="text-dark-foreground/70 leading-relaxed">
-              Soluções completas em locação de veículos e gestão de investimentos em frota em Blumenau - SC.
-            </p>
+            {siteDescription && (
+              <p className="text-dark-foreground/70 leading-relaxed">
+                {siteDescription}
+              </p>
+            )}
           </div>
 
           <div>
@@ -56,37 +75,43 @@ const Footer = () => {
           <div>
             <h3 className="font-bold text-lg mb-4 text-primary">Contato</h3>
             <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <MapPin className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-dark-foreground/70">Blumenau - Santa Catarina</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Phone className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <a
-                  href="https://wa.me/5547984485492"
-                  className="text-dark-foreground/70 hover:text-primary transition-colors"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  (47) 98448-5492
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
-                <Mail className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <a
-                  href="mailto:contato@rvcarlocacoes.com.br"
-                  className="text-dark-foreground/70 hover:text-primary transition-colors"
-                >
-                  contato@rvcarlocacoes.com.br
-                </a>
-              </li>
+              {contactAddress && (
+                <li className="flex items-start gap-2">
+                  <MapPin className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-dark-foreground/70">{contactAddress}</span>
+                </li>
+              )}
+              {contactPhone && contactWhatsapp && (
+                <li className="flex items-start gap-2">
+                  <Phone className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <a
+                    href={`https://wa.me/${contactWhatsapp}`}
+                    className="text-dark-foreground/70 hover:text-primary transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {contactPhone}
+                  </a>
+                </li>
+              )}
+              {contactEmail && (
+                <li className="flex items-start gap-2">
+                  <Mail className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <a
+                    href={`mailto:${contactEmail}`}
+                    className="text-dark-foreground/70 hover:text-primary transition-colors"
+                  >
+                    {contactEmail}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
 
         <div className="border-t border-dark-foreground/10 pt-8 text-center">
           <p className="text-dark-foreground/60">
-            © {currentYear} RV Car Locações e Investimentos. Todos os direitos reservados.
+            © {currentYear} {siteName}. Todos os direitos reservados.
           </p>
         </div>
       </div>

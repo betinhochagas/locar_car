@@ -1,4 +1,5 @@
 ﻿import { Vehicle } from '@/types/admin';
+import { getAuthHeader } from './authManager';
 
 // Detectar automaticamente a URL base do ambiente
 const getApiUrl = (): string => {
@@ -9,55 +10,94 @@ const getApiUrl = (): string => {
   
   // Em produção, usa URL relativa (mesmo domínio)
   if (import.meta.env.PROD) {
-    return '/rvcar/api/vehicles.php';
+    return '/api/vehicles.php';
   }
   
-  // Em desenvolvimento, tenta usar o host atual com porta 3000
+  // Em desenvolvimento, detectar se está acessando via IP da rede local
   const hostname = window.location.hostname;
-  return `http://${hostname}:3000/api/vehicles.php`;
+  
+  // Se for localhost ou 127.0.0.1, usar localhost
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3000/api/vehicles.php';
+  }
+  
+  // Se for IP da rede local (192.168.x.x, 10.x.x.x), usar o mesmo IP
+  if (hostname.match(/^(192\.168\.|10\.)/)) {
+    return `http://${hostname}:3000/api/vehicles.php`;
+  }
+  
+  // Fallback para localhost
+  return 'http://localhost:3000/api/vehicles.php';
 };
 
 const API_URL = getApiUrl();
 
-console.log('VehicleManager - API URL:', API_URL);
-console.log('Environment:', import.meta.env.MODE);
+// Debug logs only in development
+if (import.meta.env.DEV) {
+  console.log('VehicleManager - API URL:', API_URL);
+  console.log('Environment:', import.meta.env.MODE);
+}
 
-const fetchAPI = async (endpoint: string = '', options: RequestInit = {}): Promise<any> => {
+const fetchAPI = async <T = unknown>(endpoint: string = '', options: RequestInit = {}): Promise<T> => {
   const url = endpoint ? `${API_URL}?${endpoint}` : API_URL;
   
-  console.log(`[VehicleManager] Fetching: ${url}`);
+  if (import.meta.env.DEV) {
+    console.log(`[VehicleManager] Fetching: ${url}`);
+  }
   
   try {
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...getAuthHeader(),
         ...(options.headers || {}),
       },
       mode: 'cors',
       credentials: 'omit',
     });
     
-    console.log(`[VehicleManager] Response status: ${response.status}`);
+    if (import.meta.env.DEV) {
+      console.log(`[VehicleManager] Response status: ${response.status}`);
+    }
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[VehicleManager] Error response:`, errorText);
+      if (import.meta.env.DEV) {
+        console.error(`[VehicleManager] Error response:`, errorText);
+      }
       throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
     
     const data = await response.json();
-    console.log(`[VehicleManager] Success! Received ${Array.isArray(data) ? data.length : 1} item(s)`);
+    if (import.meta.env.DEV) {
+      console.log(`[VehicleManager] Success! Received ${Array.isArray(data) ? data.length : 1} item(s)`);
+    }
     return data;
   } catch (error) {
-    console.error(`[VehicleManager] Fetch error:`, error);
+    if (import.meta.env.DEV) {
+      console.error(`[VehicleManager] Fetch error:`, error);
+    }
     throw error;
   }
 };
 
+interface RawVehicleData {
+  id: string | number;
+  name: string;
+  price: string;
+  image: string;
+  features?: string[];
+  available?: boolean | number;
+  created_at?: string;
+  createdAt?: string;
+  updated_at?: string;
+  updatedAt?: string;
+}
+
 export const getVehicles = async (): Promise<Vehicle[]> => {
-  const data = await fetchAPI();
-  return data.map((v: any) => ({
+  const data = await fetchAPI<RawVehicleData[]>();
+  return data.map((v) => ({
     id: String(v.id), name: v.name, price: v.price, image: v.image,
     features: Array.isArray(v.features) ? v.features : [],
     available: Boolean(v.available),

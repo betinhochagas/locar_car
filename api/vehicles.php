@@ -1,122 +1,182 @@
 <?php
 
 /**
- * RV Car Solutions - Vehicles API
+ * Vehicles API (JSON Version)
  * 
- * API RESTful para gerenciamento de veículos
- * 
- * Endpoints:
- * - GET    /api/vehicles.php           - Lista todos os veículos
- * - GET    /api/vehicles.php?id=X      - Busca veículo específico
- * - POST   /api/vehicles.php           - Adiciona novo veículo
- * - PUT    /api/vehicles.php?id=X      - Atualiza veículo
- * - DELETE /api/vehicles.php?id=X      - Remove veículo
- * - PATCH  /api/vehicles.php?id=X      - Toggle disponibilidade
+ * API RESTful para gerenciamento de veículos usando JSON
  */
 
 // ============================================================================
-// CORS CONFIGURATION - DEVE SER A PRIMEIRA COISA NO ARQUIVO
+// CORS CONFIGURATION
 // ============================================================================
 
-// Detectar se está em produção ou desenvolvimento
-$is_production = !in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1']);
+// Detectar se está em produção (não é localhost nem IP local)
+$server_name = $_SERVER['SERVER_NAME'];
+$is_production = !in_array($server_name, ['localhost', '127.0.0.1', '0.0.0.0']) &&
+    !preg_match('/^192\.168\./', $server_name) &&
+    !preg_match('/^10\./', $server_name);
 
 if ($is_production) {
-    // PRODUÇÃO: Permitir apenas o próprio domínio
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $domain = $_SERVER['SERVER_NAME'];
-
-    // Lista de domínios permitidos em produção
+    $domain = $server_name;
     $allowed_origins = [
         $protocol . '://' . $domain,
         'https://' . $domain,
         'http://' . $domain,
     ];
-
     $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-
     if (in_array($origin, $allowed_origins)) {
         header("Access-Control-Allow-Origin: " . $origin);
     } else {
-        // Mesmo domínio: não precisa CORS
         header("Access-Control-Allow-Origin: " . $protocol . '://' . $domain);
     }
 } else {
-    // DESENVOLVIMENTO: Permitir origens de teste
-    $allowed_origins = [
-        'http://localhost:8080',
-        'http://localhost:5173',
-        'http://127.0.0.1:8080',
-        'http://127.0.0.1:5173',
-    ];
-
+    // Desenvolvimento: permitir qualquer origem local
     $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
-    if (in_array($origin, $allowed_origins)) {
-        header("Access-Control-Allow-Origin: " . $origin);
-        header('Access-Control-Allow-Credentials: true');
+    if ($origin) {
+        // Se tem origem, validar que é local
+        $isLocal = preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/', $origin);
+
+        if ($isLocal) {
+            header("Access-Control-Allow-Origin: " . $origin);
+            header('Access-Control-Allow-Credentials: true');
+        } else {
+            // Origem não reconhecida, permitir mesmo assim em dev
+            header("Access-Control-Allow-Origin: *");
+        }
     } else {
+        // Sem origem, permitir todas
         header("Access-Control-Allow-Origin: *");
     }
 }
 
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Cache-Control, Pragma');
 header('Access-Control-Max-Age: 86400');
 header('Content-Type: application/json; charset=utf-8');
 
-// Responder a requisições OPTIONS (preflight)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit(0);
 }
 
-require_once 'config.php';
+// ============================================================================
+// JSON FILE MANAGEMENT
+// ============================================================================
 
-// Verificar autenticação básica (simples para este projeto)
-// Em produção, considere JWT ou OAuth
+$VEHICLES_FILE = __DIR__ . '/../data/vehicles.json';
+
+function readVehicles()
+{
+    global $VEHICLES_FILE;
+    if (!file_exists($VEHICLES_FILE)) {
+        return [];
+    }
+    $content = file_get_contents($VEHICLES_FILE);
+    return json_decode($content, true) ?: [];
+}
+
+function writeVehicles($vehicles)
+{
+    global $VEHICLES_FILE;
+    $dir = dirname($VEHICLES_FILE);
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+    $json = json_encode($vehicles, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    file_put_contents($VEHICLES_FILE, $json);
+}
+
+function sendResponse($data, $statusCode = 200)
+{
+    http_response_code($statusCode);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit();
+}
+
+function sendError($message, $statusCode = 400)
+{
+    http_response_code($statusCode);
+    echo json_encode([
+        'error' => true,
+        'message' => $message
+    ], JSON_UNESCAPED_UNICODE);
+    exit();
+}
+
+function getNextId($vehicles)
+{
+    if (empty($vehicles)) {
+        return 1;
+    }
+    $maxId = max(array_column($vehicles, 'id'));
+    return $maxId + 1;
+}
+
+// ============================================================================
+// AUTENTICAÇÃO (Simplificada para JSON)
+// ============================================================================
+
 function checkAuth()
 {
-    // Por enquanto, apenas verifica se tem o header de autenticação
-    // Você pode melhorar isso depois
-    $headers = getallheaders();
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 
-    // Para operações de escrita, verificar autenticação
-    if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE', 'PATCH'])) {
-        if (!isset($headers['Authorization']) && !isset($_GET['admin'])) {
-            // Permitir sem auth por enquanto, mas logar aviso
-            // sendError('Autenticação necessária', 401);
+    // Permitir acesso público para GET
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        return true;
+    }
+
+    // Para POST, PUT, DELETE, PATCH - verificar token
+    if (empty($authHeader)) {
+        sendError('Token de autenticação necessário', 401);
+    }
+
+    $token = str_replace('Bearer ', '', $authHeader);
+
+    // Verificar se token é válido
+    $tokensFile = __DIR__ . '/../data/admin-tokens.json';
+    if (file_exists($tokensFile)) {
+        $tokens = json_decode(file_get_contents($tokensFile), true);
+        foreach ($tokens as $t) {
+            if ($t['token'] === $token && strtotime($t['expires_at']) > time()) {
+                return true;
+            }
         }
     }
-    return true;
+
+    sendError('Token inválido ou expirado', 401);
 }
 
 // Verificar autenticação
 checkAuth();
 
+// ============================================================================
+// PROCESSAR REQUISIÇÃO
+// ============================================================================
+
 try {
-    $pdo = getDBConnection();
     $method = $_SERVER['REQUEST_METHOD'];
 
     switch ($method) {
         case 'GET':
-            handleGet($pdo);
+            handleGet();
             break;
 
         case 'POST':
-            handlePost($pdo);
+            handlePost();
             break;
 
         case 'PUT':
-            handlePut($pdo);
+            handlePut();
             break;
 
         case 'DELETE':
-            handleDelete($pdo);
+            handleDelete();
             break;
 
         case 'PATCH':
-            handlePatch($pdo);
+            handlePatch();
             break;
 
         default:
@@ -127,235 +187,164 @@ try {
     sendError($e->getMessage(), 500);
 }
 
-/**
- * GET - Listar veículos ou buscar específico
- */
-function handleGet($pdo)
+// ============================================================================
+// HANDLERS
+// ============================================================================
+
+function handleGet()
 {
+    $vehicles = readVehicles();
+
     if (isset($_GET['id'])) {
-        // Buscar veículo específico
-        $stmt = $pdo->prepare("
-            SELECT id, name, price, image, features, available, 
-                   created_at, updated_at 
-            FROM vehicles 
-            WHERE id = ?
-        ");
-        $stmt->execute([$_GET['id']]);
-        $vehicle = $stmt->fetch();
+        $id = (int)$_GET['id'];
+        $vehicle = null;
+
+        foreach ($vehicles as $v) {
+            if ($v['id'] === $id) {
+                $vehicle = $v;
+                break;
+            }
+        }
 
         if (!$vehicle) {
             sendError('Veículo não encontrado', 404);
         }
 
-        // Converter features de JSON para array
-        $vehicle['features'] = json_decode($vehicle['features'], true) ?: [];
-        $vehicle['available'] = (bool)$vehicle['available'];
-
         sendResponse($vehicle);
     } else {
-        // Listar todos os veículos
-        $stmt = $pdo->query("
-            SELECT id, name, price, image, features, available, 
-                   created_at, updated_at 
-            FROM vehicles 
-            ORDER BY created_at ASC
-        ");
-        $vehicles = $stmt->fetchAll();
+        // Filtros opcionais
+        $availableOnly = isset($_GET['available']) && $_GET['available'] === 'true';
 
-        // Processar cada veículo
-        foreach ($vehicles as &$vehicle) {
-            $vehicle['features'] = json_decode($vehicle['features'], true) ?: [];
-            $vehicle['available'] = (bool)$vehicle['available'];
+        if ($availableOnly) {
+            $vehicles = array_filter($vehicles, function ($v) {
+                return $v['available'] === true;
+            });
         }
 
-        sendResponse($vehicles);
+        sendResponse(array_values($vehicles));
     }
 }
 
-/**
- * POST - Adicionar novo veículo
- */
-function handlePost($pdo)
+function handlePost()
 {
     $input = json_decode(file_get_contents('php://input'), true);
 
-    // Validar dados obrigatórios
     if (empty($input['name']) || empty($input['price'])) {
         sendError('Nome e preço são obrigatórios', 400);
     }
 
-    // Gerar ID único
-    $id = uniqid('veh_', true);
+    $vehicles = readVehicles();
+    $id = getNextId($vehicles);
 
-    // Preparar dados
-    $name = $input['name'];
-    $price = $input['price'];
-    $image = $input['image'] ?? '/placeholder.svg';
-    $features = json_encode($input['features'] ?? [], JSON_UNESCAPED_UNICODE);
-    $available = isset($input['available']) ? (int)$input['available'] : 1;
-    $now = date('Y-m-d H:i:s');
-
-    // Inserir no banco
-    $stmt = $pdo->prepare("
-        INSERT INTO vehicles (id, name, price, image, features, available, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-
-    $stmt->execute([$id, $name, $price, $image, $features, $available, $now, $now]);
-
-    // Retornar veículo criado
-    $vehicle = [
+    $newVehicle = [
         'id' => $id,
-        'name' => $name,
-        'price' => $price,
-        'image' => $image,
-        'features' => json_decode($features, true),
-        'available' => (bool)$available,
-        'createdAt' => $now,
-        'updatedAt' => $now
+        'name' => $input['name'],
+        'price' => (float)$input['price'],
+        'image' => $input['image'] ?? '',
+        'features' => $input['features'] ?? [],
+        'available' => $input['available'] ?? true,
+        'created_at' => date('Y-m-d\TH:i:s'),
+        'updated_at' => date('Y-m-d\TH:i:s')
     ];
 
-    sendResponse($vehicle, 201);
+    $vehicles[] = $newVehicle;
+    writeVehicles($vehicles);
+
+    sendResponse($newVehicle, 201);
 }
 
-/**
- * PUT - Atualizar veículo
- */
-function handlePut($pdo)
+function handlePut()
 {
     if (!isset($_GET['id'])) {
         sendError('ID do veículo é obrigatório', 400);
     }
 
-    $id = $_GET['id'];
+    $id = (int)$_GET['id'];
     $input = json_decode(file_get_contents('php://input'), true);
 
-    // Verificar se veículo existe
-    $stmt = $pdo->prepare("SELECT id FROM vehicles WHERE id = ?");
-    $stmt->execute([$id]);
-    if (!$stmt->fetch()) {
+    $vehicles = readVehicles();
+    $found = false;
+
+    foreach ($vehicles as &$vehicle) {
+        if ($vehicle['id'] === $id) {
+            $found = true;
+
+            if (isset($input['name'])) {
+                $vehicle['name'] = $input['name'];
+            }
+
+            if (isset($input['price'])) {
+                $vehicle['price'] = (float)$input['price'];
+            }
+
+            if (isset($input['image'])) {
+                $vehicle['image'] = $input['image'];
+            }
+
+            if (isset($input['features'])) {
+                $vehicle['features'] = $input['features'];
+            }
+
+            if (isset($input['available'])) {
+                $vehicle['available'] = (bool)$input['available'];
+            }
+
+            $vehicle['updated_at'] = date('Y-m-d\TH:i:s');
+
+            writeVehicles($vehicles);
+            sendResponse($vehicle);
+        }
+    }
+
+    if (!$found) {
         sendError('Veículo não encontrado', 404);
     }
-
-    // Preparar dados para atualização
-    $updates = [];
-    $params = [];
-
-    if (isset($input['name'])) {
-        $updates[] = "name = ?";
-        $params[] = $input['name'];
-    }
-    if (isset($input['price'])) {
-        $updates[] = "price = ?";
-        $params[] = $input['price'];
-    }
-    if (isset($input['image'])) {
-        $updates[] = "image = ?";
-        $params[] = $input['image'];
-    }
-    if (isset($input['features'])) {
-        $updates[] = "features = ?";
-        $params[] = json_encode($input['features'], JSON_UNESCAPED_UNICODE);
-    }
-    if (isset($input['available'])) {
-        $updates[] = "available = ?";
-        $params[] = (int)$input['available'];
-    }
-
-    // Adicionar updated_at
-    $updates[] = "updated_at = ?";
-    $params[] = date('Y-m-d H:i:s');
-
-    // Adicionar ID no final
-    $params[] = $id;
-
-    // Executar update
-    $sql = "UPDATE vehicles SET " . implode(", ", $updates) . " WHERE id = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    // Buscar e retornar veículo atualizado
-    $stmt = $pdo->prepare("
-        SELECT id, name, price, image, features, available, created_at, updated_at 
-        FROM vehicles 
-        WHERE id = ?
-    ");
-    $stmt->execute([$id]);
-    $vehicle = $stmt->fetch();
-
-    $vehicle['features'] = json_decode($vehicle['features'], true) ?: [];
-    $vehicle['available'] = (bool)$vehicle['available'];
-
-    sendResponse($vehicle);
 }
 
-/**
- * DELETE - Remover veículo
- */
-function handleDelete($pdo)
+function handleDelete()
 {
     if (!isset($_GET['id'])) {
         sendError('ID do veículo é obrigatório', 400);
     }
 
-    $id = $_GET['id'];
+    $id = (int)$_GET['id'];
+    $vehicles = readVehicles();
 
-    // Verificar se existe
-    $stmt = $pdo->prepare("SELECT id FROM vehicles WHERE id = ?");
-    $stmt->execute([$id]);
-    if (!$stmt->fetch()) {
+    $newVehicles = array_filter($vehicles, function ($v) use ($id) {
+        return $v['id'] !== $id;
+    });
+
+    if (count($newVehicles) === count($vehicles)) {
         sendError('Veículo não encontrado', 404);
     }
 
-    // Remover
-    $stmt = $pdo->prepare("DELETE FROM vehicles WHERE id = ?");
-    $stmt->execute([$id]);
+    writeVehicles(array_values($newVehicles));
 
     sendResponse(['success' => true, 'message' => 'Veículo removido com sucesso']);
 }
 
-/**
- * PATCH - Toggle disponibilidade
- */
-function handlePatch($pdo)
+function handlePatch()
 {
     if (!isset($_GET['id'])) {
         sendError('ID do veículo é obrigatório', 400);
     }
 
-    $id = $_GET['id'];
+    $id = (int)$_GET['id'];
+    $vehicles = readVehicles();
+    $found = false;
 
-    // Buscar estado atual
-    $stmt = $pdo->prepare("SELECT available FROM vehicles WHERE id = ?");
-    $stmt->execute([$id]);
-    $vehicle = $stmt->fetch();
+    foreach ($vehicles as &$vehicle) {
+        if ($vehicle['id'] === $id) {
+            $found = true;
+            $vehicle['available'] = !$vehicle['available'];
+            $vehicle['updated_at'] = date('Y-m-d\TH:i:s');
 
-    if (!$vehicle) {
-        sendError('Veículo não encontrado', 404);
+            writeVehicles($vehicles);
+            sendResponse($vehicle);
+        }
     }
 
-    // Toggle disponibilidade
-    $newAvailable = $vehicle['available'] ? 0 : 1;
-
-    // Atualizar
-    $stmt = $pdo->prepare("
-        UPDATE vehicles 
-        SET available = ?, updated_at = ? 
-        WHERE id = ?
-    ");
-    $stmt->execute([$newAvailable, date('Y-m-d H:i:s'), $id]);
-
-    // Buscar e retornar veículo atualizado
-    $stmt = $pdo->prepare("
-        SELECT id, name, price, image, features, available, created_at, updated_at 
-        FROM vehicles 
-        WHERE id = ?
-    ");
-    $stmt->execute([$id]);
-    $vehicle = $stmt->fetch();
-
-    $vehicle['features'] = json_decode($vehicle['features'], true) ?: [];
-    $vehicle['available'] = (bool)$vehicle['available'];
-
-    sendResponse($vehicle);
+    if (!$found) {
+        sendError('Veículo não encontrado', 404);
+    }
 }

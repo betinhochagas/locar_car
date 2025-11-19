@@ -17,8 +17,21 @@ dist-ssr
 .env.local
 .env.production
 
+# Sensitive data files - NEVER commit these!
+data/admin-users.json
+data/admin-tokens.json
+data/site-settings.json
+data/page-sections.json
+data/vehicles.json
+
 # PHP Configuration (production only - not for local development)
 api/config.production.php
+
+# PHP Backup and temp files
+api/*-backup*.php
+api/*-temp*.php
+deploy-rvcar/api/*-backup*.php
+deploy-rvcar/api/*-temp*.php
 
 # Editor directories and files
 .vscode/*

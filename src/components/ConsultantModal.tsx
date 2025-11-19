@@ -7,9 +7,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Car, TrendingUp } from "lucide-react";
-import logo from "@/assets/logo.png";
+import { getAbsoluteImageUrl } from "@/lib/imageUrlHelper";
+import logo from "@/assets/logo.svg";
 import RentalModal from "./RentalModal";
 import InvestmentModal from "./InvestmentModal";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 interface ConsultantModalProps {
   open: boolean;
@@ -19,6 +21,11 @@ interface ConsultantModalProps {
 type ServiceType = "rental" | "investment" | null;
 
 const ConsultantModal = ({ open, onOpenChange }: ConsultantModalProps) => {
+  const { getConfig } = useSiteConfig();
+  const siteName = getConfig('site_name', '');
+  const siteLogoRaw = getConfig('site_logo', '');
+  // Se não houver logo configurado, usar logo padrão; senão, normalizar URL
+  const siteLogo = !siteLogoRaw ? logo : getAbsoluteImageUrl(siteLogoRaw);
   const [selectedService, setSelectedService] = useState<ServiceType>(null);
 
   // Reset ao fechar o modal principal
@@ -43,7 +50,7 @@ const ConsultantModal = ({ open, onOpenChange }: ConsultantModalProps) => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="space-y-3">
             <div className="flex items-center justify-center">
-              <img src={logo} alt="RV Car" className="h-16 w-auto" />
+              <img src={siteLogo} alt={siteName} className="h-16 w-auto" />
             </div>
             <DialogTitle className="text-center text-2xl">
               Como podemos ajudar?

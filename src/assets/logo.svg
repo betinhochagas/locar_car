@@ -1,0 +1,8 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" rx="20" fill="#667eea"/>
+  <path d="M50 100L80 70L110 100L80 130L50 100Z" fill="white" opacity="0.9"/>
+  <path d="M90 100L120 70L150 100L120 130L90 100Z" fill="white" opacity="0.7"/>
+  <text x="100" y="170" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">
+    LOGO
+  </text>
+</svg>
