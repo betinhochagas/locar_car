@@ -271,7 +271,7 @@ Encontrou um bug ou tem uma sugestão?
 
 <div align="center">
 
-**Desenvolvido com ❤️ por [betinhochagas](https://github.com/betinhochagas)**
+**Desenvolvido por [betinhochagas](https://github.com/betinhochagas)**
 
 [⬆ Voltar ao topo](#-sistema-de-gestão-de-locadora)
 
